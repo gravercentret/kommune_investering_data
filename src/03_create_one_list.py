@@ -72,7 +72,7 @@ collapsed_df = final_df.groupby('ISIN').agg({
 }).reset_index()
 
 # Save the collapsed dataframe to a new Excel file
-collapsed_df.to_excel('collapsed_isin_data.xlsx', index=False)
+collapsed_df.to_excel('all_exclude_lists_isin.xlsx', index=False)
 
 # Print the resulting DataFrame
 print(collapsed_df)

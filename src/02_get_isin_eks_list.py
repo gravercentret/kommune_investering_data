@@ -108,4 +108,10 @@ df_Velliv_isin = add_isin_eksklusionsliste(df_kilde, df_Velliv)
 file_save = "../data/Eksklusionslister/Velliv_eksklusionsliste_isin.xlsx"
 df_Velliv_isin.to_excel(file_save, index=False)
 
+# FN
+FN_path = "../data/Eksklusionslister/FN_eksklusionsliste.xlsx"
+df_FN = pd.read_excel(FN_path)
 
+df_FN_isin = add_isin_eksklusionsliste(df_kilde, df_FN)
+file_save = "../data/Eksklusionslister/FN_eksklusionsliste_isin.xlsx"
+df_FN_isin.to_excel(file_save, index=False)
