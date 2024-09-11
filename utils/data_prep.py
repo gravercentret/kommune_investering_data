@@ -17,7 +17,7 @@ def data_processing(df):
     # Sort the dataframe alphabetically by "Kommune" in a case-insensitive manner
     df = df.sort_values(by=["Kommune", "Markedsværdi (DKK)"], ascending=[True, False])
 
-    df['Kommune'] = df['Kommune'].str.strip()
+    df["Kommune"] = df["Kommune"].str.strip()
     return df
 
 

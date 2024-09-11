@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 
+
 def add_isin_eksklusionsliste(df_kilde, df_eksklusionsliste):
     # Sample data
     df1 = df_kilde
@@ -11,38 +12,39 @@ def add_isin_eksklusionsliste(df_kilde, df_eksklusionsliste):
         if pd.isna(name):
             return ""
         # Lowercase and remove special characters
-        return re.sub(r'\W+', '', name.lower())
+        return re.sub(r"\W+", "", name.lower())
 
     # Apply normalization to relevant columns
-    df1['Udsteder_normalized'] = df1['Udsteder'].apply(normalize_name)
-    df1['Værdipapirets navn_normalized'] = df1['Værdipapirets navn'].apply(normalize_name)
-    df2['Selskab_normalized'] = df2['Selskab'].apply(normalize_name)
+    df1["Udsteder_normalized"] = df1["Udsteder"].apply(normalize_name)
+    df1["Værdipapirets navn_normalized"] = df1["Værdipapirets navn"].apply(normalize_name)
+    df2["Selskab_normalized"] = df2["Selskab"].apply(normalize_name)
 
     # Function to find ISINs, Udsteder, and Værdipapirets navn based on partial match
     def find_isin_and_names(selskab, df1):
         matches = df1[
-            (df1['Udsteder_normalized'].str.contains(selskab)) |
-            (df1['Værdipapirets navn_normalized'].str.contains(selskab))
+            (df1["Udsteder_normalized"].str.contains(selskab))
+            | (df1["Værdipapirets navn_normalized"].str.contains(selskab))
         ]
         # Return unique ISINs, Udsteder, and Værdipapirets navn if matches are found
         if not matches.empty:
-            isins = matches['ISIN kode'].unique().tolist()
-            udsteder = matches['Udsteder'].unique().tolist()
-            værdipapirets_navn = matches['Værdipapirets navn'].unique().tolist()
+            isins = matches["ISIN kode"].unique().tolist()
+            udsteder = matches["Udsteder"].unique().tolist()
+            værdipapirets_navn = matches["Værdipapirets navn"].unique().tolist()
             return isins, udsteder, værdipapirets_navn
         else:
             return [], [], []
 
     # Apply the function to each row in df2 and create new columns for ISIN, Udsteder, and Værdipapirets navn
-    df2[['ISIN', 'Matched Udsteder', 'Matched Værdipapirets navn']] = df2['Selskab_normalized'].apply(
-        lambda x: pd.Series(find_isin_and_names(x, df1))
-    )
+    df2[["ISIN", "Matched Udsteder", "Matched Værdipapirets navn"]] = df2[
+        "Selskab_normalized"
+    ].apply(lambda x: pd.Series(find_isin_and_names(x, df1)))
 
     return df2
 
+
 data_path = "../data/data_investeringer.xlsx"
 df = pd.read_excel(data_path)
-df_kilde = df[df['ISIN kode'].notna()]
+df_kilde = df[df["ISIN kode"].notna()]
 
 # PFA
 pfa_path = "../data/Eksklusionslister/PFA_eksklusionsliste.xlsx"

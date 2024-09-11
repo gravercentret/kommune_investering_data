@@ -43,16 +43,13 @@ with col1:
     if not filtered_df_reg.empty:
         # Pivot the data to prepare for stacked bar plot (amount of rows)
         type_counts = filtered_df_reg.pivot_table(
-            index='Kommune',
-            columns='Type',
-            aggfunc='size',
-            fill_value=0
+            index="Kommune", columns="Type", aggfunc="size", fill_value=0
         )
 
         fig, ax = plt.subplots(figsize=(10, 6))
 
         # Plot a stacked bar chart (amount of rows)
-        type_counts.plot(kind='bar', stacked=True, ax=ax)
+        type_counts.plot(kind="bar", stacked=True, ax=ax)
 
         ax.set_xlabel("Kommune")
         ax.set_ylabel("Number of Entries")
@@ -71,17 +68,17 @@ with col2:
     if not filtered_df_reg.empty:
         # Pivot the data to prepare for stacked bar plot (total Markedsværdi)
         type_sums = filtered_df_reg.pivot_table(
-            index='Kommune',
-            columns='Type',
-            values='Markedsværdi (DKK)',
-            aggfunc='sum',
-            fill_value=0
+            index="Kommune",
+            columns="Type",
+            values="Markedsværdi (DKK)",
+            aggfunc="sum",
+            fill_value=0,
         )
 
         fig, ax = plt.subplots(figsize=(10, 6))
 
         # Plot a stacked bar chart (total Markedsværdi)
-        type_sums.plot(kind='bar', stacked=True, ax=ax)
+        type_sums.plot(kind="bar", stacked=True, ax=ax)
 
         ax.set_xlabel("Kommune")
         ax.set_ylabel("Total Markedsværdi (DKK)")
