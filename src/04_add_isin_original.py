@@ -1,17 +1,18 @@
 import pandas as pd
+import numpy as np
 
 data_path = "../data/data_investeringer.xlsx"
 df = pd.read_excel(data_path)
 
 ### Cleaning df_kilde
 # Replace '-' with NaN (remove entries with no value)
-df['Markedsværdi (DKK)'] = df['Markedsværdi (DKK)'].replace('-', np.nan)
+df["Markedsværdi (DKK)"] = df["Markedsværdi (DKK)"].replace("-", np.nan)
 
 # Remove any non-numeric characters except for digits and decimal points
-df['Markedsværdi (DKK)'] = df['Markedsværdi (DKK)'].replace(r'[^\d.]', '', regex=True)
+df["Markedsværdi (DKK)"] = df["Markedsværdi (DKK)"].replace(r"[^\d.]", "", regex=True)
 
 # Convert the column to float (after cleaning)
-df['Markedsværdi (DKK)'] = pd.to_numeric(df['Markedsværdi (DKK)'], errors='coerce')
+df["Markedsværdi (DKK)"] = pd.to_numeric(df["Markedsværdi (DKK)"], errors="coerce")
 
 df = df[df["Kommune"].notna()]
 df = df[df["ISIN kode"].notna()]

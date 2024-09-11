@@ -54,6 +54,14 @@ df_pfa_isin = add_isin_eksklusionsliste(df_kilde, df_pfa)
 file_save = "../data/Eksklusionslister/PFA_eksklusionsliste_isin.xlsx"
 df_pfa_isin.to_excel(file_save, index=False)
 
+# Akademiker Pension
+akademikerpension_path = "../data/Eksklusionslister/Akademiker Pension_eksklusionsliste.xlsx"
+df_akademikerpension = pd.read_excel(akademikerpension_path)
+
+df_akademikerpension_isin = add_isin_eksklusionsliste(df_kilde, df_akademikerpension)
+file_save = "../data/Eksklusionslister/Akademiker Pension_eksklusionsliste_isin.xlsx"
+df_akademikerpension_isin.to_excel(file_save, index=False)
+
 # AP Pension
 appension_path = "../data/Eksklusionslister/AP Pension_eksklusionsliste.xlsx"
 df_appension = pd.read_excel(appension_path)

@@ -7,7 +7,7 @@ merged_df = pd.read_excel(data_path)
 relevant_organizations = [
     "FN",
     "AP Pension",
-    "ATP",
+    "Akademiker Pension" "ATP",
     "Lærernes Pension",
     "Nordea",
     "PensionDanmark",
