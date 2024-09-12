@@ -94,20 +94,20 @@ filled_df.to_excel("../data/full_data.xlsx", index=False)
 
 
 ### Antal kommuner problematisk ifølge FN (58)
-# len(merged_df[merged_df['Problematisk ifølge (FN)']=='FN']['Kommune'].unique())
+# len(filled_df[filled_df['Problematisk ifølge (FN)']=='FN']['Kommune'].unique())
 
 ### Der er 71 kommuner, hvor der er problematiske investeringer
 
 ### Der er 21 kommuner uden noget problematisk
 # First, filter the rows where 'Årsag til eksklusion' is empty or NaN
-# empty_arsag_df = merged_df[merged_df['Årsag til eksklusion'].isna() | (merged_df['Årsag til eksklusion'] == "")]
+# empty_arsag_df = filled_df[filled_df['Årsag til eksklusion'].isna() | (filled_df['Årsag til eksklusion'] == "")]
 
-# Now, find Kommuner that do not have any non-empty 'Årsag til eksklusion'
-# Get all unique Kommuner
-# all_kommuner = merged_df['Kommune'].unique()
+# # Now, find Kommuner that do not have any non-empty 'Årsag til eksklusion'
+# # Get all unique Kommuner
+# all_kommuner = filled_df['Kommune'].unique()
 
 # # Get Kommuner that have non-empty 'Årsag til eksklusion'
-# kommuner_with_arsag = merged_df[~merged_df['Årsag til eksklusion'].isna() & (merged_df['Årsag til eksklusion'] != "")]['Kommune'].unique()
+# kommuner_with_arsag = filled_df[~filled_df['Årsag til eksklusion'].isna() & (filled_df['Årsag til eksklusion'] != "")]['Kommune'].unique()
 
 # # Find Kommuner that do not have any non-empty 'Årsag til eksklusion'
 # kommuner_without_arsag = set(all_kommuner) - set(kommuner_with_arsag)

@@ -6,7 +6,7 @@ import ast
 folder_path = "../data/Eksklusionslister/"
 
 # Step 1: Identify files ending with _isin.xlsx
-isin_files = [file for file in os.listdir(folder_path) if file.endswith("_isin.xlsx") and file.startswith("FN")]
+isin_files = [file for file in os.listdir(folder_path) if file.endswith("_isin.xlsx")] #and file.startswith("FN")]
 
 # Initialize an empty list to store dataframes
 dataframes = []
