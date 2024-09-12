@@ -30,19 +30,20 @@ def add_isin_eksklusionsliste(df_kilde, df_eksklusionsliste):
             isins = matches["ISIN kode"].unique().tolist()
             udsteder = matches["Udsteder"].unique().tolist()
             værdipapirets_navn = matches["Værdipapirets navn"].unique().tolist()
-            return isins, udsteder, værdipapirets_navn
+            kommune = matches["Kommune"].unique().tolist()
+            return isins, udsteder, værdipapirets_navn, kommune
         else:
-            return [], [], []
+            return [], [], [], []
 
     # Apply the function to each row in df2 and create new columns for ISIN, Udsteder, and Værdipapirets navn
-    df2[["ISIN", "Matched Udsteder", "Matched Værdipapirets navn"]] = df2[
+    df2[["ISIN", "Matched Udsteder", "Matched Værdipapirets navn", "Kommuner"]] = df2[
         "Selskab_normalized"
     ].apply(lambda x: pd.Series(find_isin_and_names(x, df1)))
 
     return df2
 
 
-data_path = "../data/data_investeringer.xlsx"
+data_path = "../data/investeringer_datagrundlag.xlsx"
 df = pd.read_excel(data_path)
 df_kilde = df[df["ISIN kode"].notna()]
 

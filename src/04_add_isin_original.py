@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-data_path = "../data/data_investeringer.xlsx"
+data_path = "../data/investeringer_datagrundlag.xlsx"
 df = pd.read_excel(data_path)
 
 ### Cleaning df_kilde
@@ -20,14 +20,14 @@ df = df[df["ISIN kode"].notna()]
 df_kilde = df
 
 ### Merging with ISIN
-isin_path = "all_exclude_lists_isin.xlsx"
+isin_path = "../data/all_exclude_lists_isin.xlsx"
 df_isin = pd.read_excel(isin_path)
 
 # Perform a left merge on the 'ISIN kode' from df_kilde and 'ISIN' from df_isin
 merged_df = pd.merge(df_kilde, df_isin, how="left", left_on="ISIN kode", right_on="ISIN")
 
 # Save the merged DataFrame to a new Excel file if needed
-merged_df.to_excel("merged_data.xlsx", index=False)
+merged_df.to_excel("../data/merged_data_exc_list_and_org.xlsx", index=False)
 
 # Print the resulting DataFrame
 print(merged_df)

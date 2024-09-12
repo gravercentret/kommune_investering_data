@@ -26,6 +26,7 @@ for file in isin_files:
 
     # Extract the first part of the filename before the underscore '_'
     file_prefix = file.split("_")[0]
+    print(file_prefix)
 
     df = pd.read_excel(file_path)
 
@@ -38,6 +39,7 @@ for file in isin_files:
             "ISIN",
             "Matched Udsteder",
             "Matched Værdipapirets navn",
+            "Kommuner"
         ]
     ]
 
@@ -59,7 +61,7 @@ for file in isin_files:
 final_df = pd.concat(dataframes, ignore_index=True)
 
 # Save the final dataframe to a new Excel file if needed
-final_df.to_excel("filtered_isin_data_with_prefix.xlsx", index=False)
+final_df.to_excel("../data/filtered_isin_data_with_prefix.xlsx", index=False)
 
 # Print the resulting DataFrame
 print(final_df)
@@ -91,7 +93,7 @@ collapsed_df = (
 )
 
 # Save the collapsed dataframe to a new Excel file
-collapsed_df.to_excel("all_exclude_lists_isin.xlsx", index=False)
+collapsed_df.to_excel("../data/all_exclude_lists_isin.xlsx", index=False)
 
 # Print the resulting DataFrame
 print(collapsed_df)

@@ -47,7 +47,7 @@ df = pd.DataFrame(data, columns=["Selskab", "Årsag til eksklusion"])
 
 print(df)
 
-file_save = "../data/Eksklusionslister/Velliv_eksklutionsliste.xlsx"
+file_save = "../data/Eksklusionslister/Velliv_eksklusionsliste.xlsx"
 df.to_excel(file_save, index=False)
 
 # %% ATP - Get Keywords
@@ -149,7 +149,7 @@ df = pd.DataFrame(extracted_data, columns=["Selskab", "Årsag til eksklusion", "
 
 print(df)
 
-file_save = "../data/Eksklusionslister/ATP_eksklutionsliste.xlsx"
+file_save = "../data/Eksklusionslister/ATP_eksklusionsliste.xlsx"
 df.to_excel(file_save, index=False)
 
 
@@ -298,7 +298,7 @@ df["Selskab"].dropna(inplace=True)
 print(df)
 
 ## Virksomheder på to linjer er ikke korrekt, manuelt rettes
-file_save = "../data/Eksklusionslister/Nordea_eksklutionsliste.xlsx"
+file_save = "../data/Eksklusionslister/Nordea_eksklusionsliste.xlsx"
 df.to_excel(file_save, index=False)
 
 # %% Lærernes Pension
@@ -351,7 +351,8 @@ exclusion_df = extract_filtered_exclusion_list(pdf_path)
 # %%
 
 
-# Function to generate the new DataFrame with Selskab and Årsag til ekskludering columns
+# Function to generate the new DataFrame with Selskab and Årsag til 
+#  columns
 def create_exclusion_reasons_df(df):
     exclusion_columns = [
         "Norms",
@@ -378,7 +379,7 @@ def create_exclusion_reasons_df(df):
         new_data.append([company_name, reasons_str])
 
     # Create a new DataFrame with the updated structure
-    new_df = pd.DataFrame(new_data, columns=["Selskab", "Årsag til ekskludering"])
+    new_df = pd.DataFrame(new_data, columns=["Selskab", "Årsag til eksklusion"])
 
     return new_df
 
@@ -386,7 +387,7 @@ def create_exclusion_reasons_df(df):
 df = create_exclusion_reasons_df(exclusion_df)
 print(df)
 
-file_save = "../data/Eksklusionslister/Lærernes Pension_eksklutionsliste.xlsx"
+file_save = "../data/Eksklusionslister/Lærernes Pension_eksklusionsliste.xlsx"
 df.to_excel(file_save, index=False)
 
 # %% AP Pension
@@ -459,7 +460,7 @@ def extract_exclusion_data(pdf_path, exclusion_areas):
                         continue  # Skip empty lines
 
     # Create a DataFrame from the collected data
-    df = pd.DataFrame(data, columns=["Selskab", "Årsag til ekskludering"])
+    df = pd.DataFrame(data, columns=["Selskab", "Årsag til eksklusion"])
 
     return df
 
@@ -470,6 +471,6 @@ exclusion_data_df = extract_exclusion_data(pdf_path, exclusion_areas)
 # Print the DataFrame
 print(exclusion_data_df)
 
-file_save = "../data/Eksklusionslister/AP Pension_eksklutionsliste.xlsx"
+file_save = "../data/Eksklusionslister/AP Pension_eksklusionsliste.xlsx"
 exclusion_data_df.to_excel(file_save, index=False)
 # %%
