@@ -6,7 +6,9 @@ import ast
 folder_path = "../data/Eksklusionslister/"
 
 # Step 1: Identify files ending with _isin.xlsx
-isin_files = [file for file in os.listdir(folder_path) if file.endswith("_isin.xlsx")] #and file.startswith("FN")]
+isin_files = [
+    file for file in os.listdir(folder_path) if file.endswith("_isin.xlsx")
+]  # and file.startswith("FN")]
 
 # Initialize an empty list to store dataframes
 dataframes = []
@@ -39,7 +41,7 @@ for file in isin_files:
             "ISIN",
             "Matched Udsteder",
             "Matched Værdipapirets navn",
-            "Kommuner"
+            "Kommuner",
         ]
     ]
 
@@ -76,6 +78,7 @@ def merge_values(series):
     else:
         return "; ".join(map(str, unique_vals))  # If multiple values, join them with a semicolon
 
+
 # Perform the aggregation by ISIN
 collapsed_df = (
     final_df.groupby("ISIN")
@@ -92,15 +95,16 @@ collapsed_df = (
     .reset_index()
 )
 
+
 # Step 8: Flatten lists, deduplicate values, and return as a semicolon-separated string
 def flatten_and_unique(val):
     all_values = []
-    
+
     try:
         # If the value is a string containing semicolon-separated lists
         if isinstance(val, str):
             # Split by semicolon if the string contains multiple list representations
-            parts = val.split(';')
+            parts = val.split(";")
             for part in parts:
                 part = part.strip()
                 # Try to convert each part to a list if it's a string representation of a list
@@ -117,14 +121,17 @@ def flatten_and_unique(val):
         # Deduplicate and sort the values
         unique_vals = sorted(set([str(item).strip() for item in all_values if item]))
         return "; ".join(unique_vals)  # Return the values as a semicolon-separated string
-    
+
     except (ValueError, SyntaxError):
         return val  # In case of an error, return the value as-is
+
 
 # Apply the function to the columns that might contain lists stored as strings
 collapsed_df["Kommuner"] = collapsed_df["Kommuner"].apply(flatten_and_unique)
 collapsed_df["Matched Udsteder"] = collapsed_df["Matched Udsteder"].apply(flatten_and_unique)
-collapsed_df["Matched Værdipapirets navn"] = collapsed_df["Matched Værdipapirets navn"].apply(flatten_and_unique)
+collapsed_df["Matched Værdipapirets navn"] = collapsed_df["Matched Værdipapirets navn"].apply(
+    flatten_and_unique
+)
 
 # Save the collapsed dataframe to a new Excel file
 collapsed_df.to_excel("../data/all_exclude_lists_isin.xlsx", index=False)

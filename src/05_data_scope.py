@@ -3,14 +3,14 @@ import pandas as pd
 data_path = "..\data\merged_data_exc_list_and_org.xlsx"
 merged_df = pd.read_excel(data_path)
 
-merged_df['Kommune'] = merged_df['Kommune'].str.replace(u'\xa0', ' ', regex=False) 
+merged_df["Kommune"] = merged_df["Kommune"].str.replace("\xa0", " ", regex=False)
 
 
 # List of relevant organizations
 relevant_organizations = [
     "FN",
     "AP Pension",
-    "Akademiker Pension", 
+    "Akademiker Pension",
     "ATP",
     "Lærernes Pension",
     "Nordea",
@@ -19,6 +19,7 @@ relevant_organizations = [
     "Sydinvest",
     "Velliv",
 ]
+
 
 # Function to extract information from 'Årsag til eksklusion'
 def extract_organisations(row):
@@ -41,7 +42,7 @@ def extract_organisations(row):
         if org_name in relevant_organizations:
             if org_name == "FN":
                 fn_value = "FN"
-                pension_companies.append(org_name) # Include FN in 'Problematisk ifølge'
+                pension_companies.append(org_name)  # Include FN in 'Problematisk ifølge'
             else:
                 pension_companies.append(org_name)
 
@@ -56,35 +57,37 @@ merged_df[["Problematisk ifølge FN", "Problematisk ifølge:"]] = merged_df[
     "Årsag til eksklusion"
 ].apply(lambda row: pd.Series(extract_organisations(row)))
 
+
 ### Fixing type
 # Create the function to fill missing 'Type' based on the majority for each 'ISIN kode'
 def fill_missing_type(df, min_rows=5, agree_threshold=0.8):
     def fill_type_for_group(group):
         # Count the missing values in 'Type' for this group
-        missing_count = group['Type'].isna().sum()
-        #print(f"ISIN kode: {group.name}, Missing 'Type' values: {missing_count}")
-        
+        missing_count = group["Type"].isna().sum()
+        # print(f"ISIN kode: {group.name}, Missing 'Type' values: {missing_count}")
+
         # Get the count of each type in the group, excluding missing values
-        type_counts = group['Type'].value_counts()
-        
+        type_counts = group["Type"].value_counts()
+
         # If there are no valid types in the group, skip this group
         if type_counts.empty:
             return group
-        
+
         total_rows = len(group)
         most_common_type, most_common_count = type_counts.idxmax(), type_counts.max()
-        
+
         # Check the condition: at least min_rows, and agreement should meet the threshold
         if total_rows >= min_rows and most_common_count / total_rows >= agree_threshold:
             # If conditions met, fill missing 'Type' with the most common type
-            group['Type'] = group['Type'].fillna(most_common_type)
-        
+            group["Type"] = group["Type"].fillna(most_common_type)
+
         return group
 
     # Group by 'ISIN kode' and apply the function to each group
-    df = df.groupby('ISIN kode').apply(fill_type_for_group)
+    df = df.groupby("ISIN kode").apply(fill_type_for_group)
 
     return df
+
 
 # Apply the function to fill missing 'Type' values
 filled_df = fill_missing_type(merged_df, min_rows=5, agree_threshold=0.80)

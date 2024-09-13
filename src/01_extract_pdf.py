@@ -351,7 +351,7 @@ exclusion_df = extract_filtered_exclusion_list(pdf_path)
 # %%
 
 
-# Function to generate the new DataFrame with Selskab and Årsag til 
+# Function to generate the new DataFrame with Selskab and Årsag til
 #  columns
 def create_exclusion_reasons_df(df):
     exclusion_columns = [
