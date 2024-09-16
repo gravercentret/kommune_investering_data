@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-data_path = "full_data.xlsx"
+data_path = "../data/full_data.xlsx"
 df = pd.read_excel(data_path)
 
 # Create an SQLite engine

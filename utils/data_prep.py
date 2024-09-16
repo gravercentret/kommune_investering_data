@@ -29,7 +29,7 @@ def get_unique_kommuner(df_pl):
     return sorted(df_pl["Kommune"].unique().to_list())
 
 
-def filter_dataframe_by_choice(df_pl, choice, all_values="Hele landet", municipalities="Kommuner", regions="Regioner"):
+def filter_dataframe_by_choice(df_pl, choice, all_values="Hele landet", municipalities="Alle kommuner", regions="Alle regioner"):
     """
     Filter the dataframe based on the user's selection (all_values, municipalities, regions, or a specific kommune).
     """

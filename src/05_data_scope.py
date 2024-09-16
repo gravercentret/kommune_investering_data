@@ -92,6 +92,19 @@ def fill_missing_type(df, min_rows=5, agree_threshold=0.8):
 # Apply the function to fill missing 'Type' values
 filled_df = fill_missing_type(merged_df, min_rows=5, agree_threshold=0.80)
 
+# Function to clean up 'Type' column and strip whitespace
+def clean_type(type_value):
+    if pd.isna(type_value):
+        return 'Ikke angivet'  # Keep empty values as is
+    cleaned_value = type_value.strip()  # Remove leading/trailing spaces
+    if cleaned_value in ['Aktie', 'Obligation', 'Virksomhedsobligation']:
+        return cleaned_value  # Keep allowed types
+    else:
+        return 'Andet'  # Change all other values to 'Andet'
+
+# Apply the function to the 'Type' column
+filled_df['Type'] = filled_df['Type'].apply(clean_type)
+
 # Save the merged DataFrame to a new Excel file if needed
 filled_df.to_excel("../data/full_data.xlsx", index=False)
 

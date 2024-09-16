@@ -4,7 +4,7 @@ import pdfplumber
 import pandas as pd
 
 # Path to the uploaded file
-pdf_path = "../data/Eksklusionslister/Velliv_eksklusionsliste.pdf"
+# pdf_path = "../data/Eksklusionslister/Velliv_eksklusionsliste.pdf"
 
 # Define the list of keywords for 'kommentar'
 keywords = [
@@ -306,7 +306,7 @@ import pdfplumber
 import pandas as pd
 
 # Path to the uploaded PDF file
-pdf_path = "../data/Eksklusionslister/Lærernes Pension_eksklusionsliste.pdf"
+# pdf_path = "../data/Eksklusionslister/Lærernes Pension_eksklusionsliste.pdf"
 
 
 # Function to parse the PDF table and convert it into a DataFrame

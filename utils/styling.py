@@ -1,8 +1,16 @@
-def color_rows(row):
+# Create a new function that applies styling only to the top 1000 rows
+def color_rows_limited(row, row_index):
     """
-    Color the row red if the 'Problematisk ifølge:' column is not empty, otherwise leave it unchanged.
+    Apply coloring only if the row index is within the first 1000 rows.
     """
-    if row["Problematisk ifølge:"] != "":
-        return ["background-color: lightcoral"] * len(row)
+    if row_index < 5000:
+        if row["Problematisk ifølge:"] != None:
+            return ["background-color: lightcoral"] * len(row)
+        else:
+            return [""] * len(row)
     else:
-        return [""] * len(row)  # No color change if the column is empty
+        return [""] * len(row)  # No styling for rows beyond 1000
+
+def color_one_column(val):
+    color = 'red' if val != None else ''
+    return f'background-color: {color}'
