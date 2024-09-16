@@ -1,6 +1,7 @@
 import numpy as np
 from sqlalchemy import create_engine
 import polars as pl
+import streamlit as st
 
 # Create an SQLite engine
 
@@ -12,7 +13,7 @@ def get_data():
         SELECT [Kommune], [ISIN kode], [Værdipapirets navn], 
         [Udsteder], [Markedsværdi (DKK)], [Type], 
         [Problematisk ifølge:], 
-        [Årsag til eksklusion] 
+        [Årsag til eksklusion]
         FROM kommunale_regioner_investeringer;
     """
 
@@ -41,6 +42,38 @@ def filter_dataframe_by_choice(df_pl, choice, all_values="Hele landet", municipa
         return df_pl.filter(df_pl["Kommune"].str.starts_with("Region"))
     else:
         return df_pl.filter(df_pl["Kommune"] == choice)
+
+import pandas as pd
+
+# Function to generate a single line with links
+def generate_organization_links(df, column_name):
+    org_links = {
+        "FN": 'https://www.un.org/',
+        "AP Pension": 'https://www.appension.dk/',
+        "Akademiker Pension": 'https://www.ap.dk/',
+        "ATP": 'https://www.atp.dk/',
+        "Lærernes Pension": 'https://www.lpension.dk/',
+        "Nordea": 'https://www.nordea.dk/',
+        "PensionDanmark": 'https://www.pensiondanmark.dk/',
+        "PFA": 'https://www.pfa.dk/',
+        "Sydinvest": 'https://www.sydinvest.dk/',
+        "Velliv": 'https://www.velliv.dk/',
+    }
+    # Extract all unique organizations from the dataframe column
+    unique_orgs = set()
+    
+    for org_list in df[column_name]:
+        if org_list is not None:
+            orgs = org_list.split("; ")
+            for org in orgs:
+                unique_orgs.add(org.strip())
+    
+    # Generate the links as one line
+    links = "; ".join([f"[{org}]({org_links[org]})" for org in unique_orgs if org in org_links])
+    
+    # Display the bold title and links
+    st.markdown(f"**Links til relevante eksklusionslister:** {links}")
+
 
 # def data_processing(df):
 #     # Removing columns with no muncipality

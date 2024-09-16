@@ -105,6 +105,37 @@ def clean_type(type_value):
 # Apply the function to the 'Type' column
 filled_df['Type'] = filled_df['Type'].apply(clean_type)
 
+# # Predefined dictionary with organizations and their corresponding links
+# org_links = {
+#     "FN":'https://www.un.org/',
+#     "AP Pension":'https://www.appension.dk/',
+#     "Akademiker Pension":'https://www.ap.dk/',
+#     "ATP":'https://www.atp.dk/',
+#     "Lærernes Pension":'https://www.lpension.dk/',
+#     "Nordea":'https://www.nordea.dk/',
+#     "PensionDanmark":'https://www.pensiondanmark.dk/',
+#     "PFA":'https://www.pfa.dk/',
+#     "Sydinvest":'https://www.sydinvest.dk/',
+#     "Velliv":'https://www.velliv.dk/',
+#     # Add more organizations and their links here
+# }
+
+# # Function to generate links based on the 'Problematisk ifølge:' column
+# def generate_links(org_string):
+#     if org_string is not None:
+#         orgs = org_string.split("; ")
+#         print(orgs)
+#         links = []
+#         for org in orgs:
+#             if org in org_links:
+#                 links.append(f"{org_links[org]}")
+#         print(links)
+#         return " \n\n".join(links) if links else ""
+
+#     # Create a new column 'Link til eksklusionsliste'
+
+# filled_df['Link til eksklusionsliste'] = filled_df['Problematisk ifølge:'].apply(generate_links)
+
 # Save the merged DataFrame to a new Excel file if needed
 filled_df.to_excel("../data/full_data.xlsx", index=False)
 
