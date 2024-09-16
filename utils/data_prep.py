@@ -45,6 +45,34 @@ def filter_dataframe_by_choice(df_pl, choice, all_values="Hele landet", municipa
 
 import pandas as pd
 
+def filter_df_by_search(df, search_query):
+    # Use case-insensitive search if query is provided
+    if search_query:
+        # Create a case-insensitive regex search pattern
+        search_pattern = f"(?i){search_query}"
+
+        # Replace NA values with empty strings and cast columns to string
+        df = df.with_columns([pl.col(col).fill_null("").cast(str) for col in df.columns])
+
+        # Combine conditions across all columns using logical OR (|) operator
+        filter_expr = None
+        for col in df.columns:
+            condition = pl.col(col).str.contains(search_pattern)
+            filter_expr = condition if filter_expr is None else filter_expr | condition
+
+        # Apply the filter
+        filtered_df = df.filter(filter_expr)
+    else:
+        filtered_df = df
+    return filtered_df
+
+def fix_column_types(df):
+    # Cast 'Markedsværdi (DKK)' back to float
+    df = df.with_columns([
+        pl.col("Markedsværdi (DKK)").cast(pl.Float64)
+    ])
+    return df
+
 # Function to generate a single line with links
 def generate_organization_links(df, column_name):
     org_links = {
