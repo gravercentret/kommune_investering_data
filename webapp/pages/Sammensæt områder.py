@@ -16,34 +16,18 @@ from utils.data_prep import (
 from utils.styling import color_rows_limited
 from src.config import set_pandas_options, set_streamlit_options
 
-# Apply the settings
-set_pandas_options()
-set_streamlit_options()
-
-# if "df_pl" not in st.session_state:
-#     st.session_state.df_pl = get_data()
-
 df = st.session_state.df_pl
+
+if "multiselect" not in st.session_state:
+    st.session_state.multiselect = []
 
 st.title("Sammenlign Kommuner")
 
-# Multiselect for choosing municipalities
-if 'selected_kommuner' not in st.session_state:
-    st.session_state.selected_kommuner = []
-
-selected_kommuner = st.multiselect(
-    'Vælg kommuner, du vil sammenligne:',
-    df['Kommune'].unique(),
-    default=st.session_state.selected_kommuner
+options = st.multiselect(
+    "What are your favorite colors",
+    df["Kommune"].unique(),
 )
 
-# Update session state after selection
-st.session_state.selected_kommuner = selected_kommuner
+filtered_df = df[[options]]
 
-# Filter dataframe
-if selected_kommuner:
-    filtered_df = df[df['Kommune'].isin(selected_kommuner)]
-    st.write(f"Viser resultater for: {', '.join(selected_kommuner)}")
-    st.dataframe(filtered_df)
-else:
-    st.write("Vælg venligst en eller flere kommuner for at se data.")
+st.dataframe(filtered_df)

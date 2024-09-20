@@ -82,16 +82,28 @@ def fix_column_types(df):
 # Function to generate a single line with links
 def generate_organization_links(df, column_name):
     org_links = {
-        "FN": "https://www.un.org/",
-        "AP Pension": "https://www.appension.dk/",
-        "Akademiker Pension": "https://www.ap.dk/",
-        "ATP": "https://www.atp.dk/",
-        "Lærernes Pension": "https://www.lpension.dk/",
-        "Nordea": "https://www.nordea.dk/",
-        "PensionDanmark": "https://www.pensiondanmark.dk/",
-        "PFA": "https://www.pfa.dk/",
-        "Sydinvest": "https://www.sydinvest.dk/",
-        "Velliv": "https://www.velliv.dk/",
+        "Akademiker Pension": "",
+        "AP Pension": "https://appension.dk/globalassets/content_mz/filer-pdf/investering/eksklusionsliste.pdf",
+        "ATP": "https://www.atp.dk/dokument/eksklusionsliste-sept-2023",
+        "BankInvest": "https://bankinvest.dk/media/l4vmr5sh/eksklusionsliste.pdf",
+        "FN": "https://www.ohchr.org/sites/default/files/documents/hrbodies/hrcouncil/sessions-regular/session31/database-hrc3136/23-06-30-Update-israeli-settlement-opt-database-hrc3136.pdf",
+        "Industriens Pension": "https://www.industrienspension.dk/da/ForMedlemmer/Investeringer-medlem/AnsvarligeInvesteringer/TalOgFakta#accordion=%7B88B4276E-3431-46C7-B291-9071056A3737%7D",
+        "Jyske Bank": "https://www.jyskebank.dk/wps/wcm/connect/jfo/ca08eb49-3a38-4e18-9ec1-d0c6dcef1371/2023-11-29+-+Eksklusionsliste_DK.pdf?MOD=AJPERES&CVID=oMBbB8q",
+        "LD Fonde": "https://www.ld.dk/media/bj4bqxwz/ld-fondes-eksklusionsliste-juni-2024.pdf",
+        "Lægernes Pension": "https://www.lpb.dk/Om-os/baeredygtighed/Negativliste",
+        "Lærernes Pension": "https://lppension.dk/globalassets/vores-investeringer/sadan-investerer-vi/beholdningslister/exclusion-list-may-2024-incl-countries---for-publication.pdf",
+        "Nordea": "https://www.nordea.com/en/doc/the-nordea-exclusion-list-2024-0.pdf",
+        "Nykredit": "https://www.nykredit.com/samfundsansvar/investeringer/ekskluderede-selskaber/",
+        "PenSam": "https://www.pensam.dk/-/media/pdf-filer/om-pensam/investering/2---eksklusionsliste-selskaber-juli-2024.pdf",
+        "PensionDanmark": "https://www.pensiondanmark.com/investeringer/udelukkelsesliste/?AspxAutoDetectCookieSupport=1",
+        "PFA": "https://www.pfa.dk/om-pfa/samfundsansvar/eksklusion/",
+        "PKA": "https://pka.dk/nyheder/pka-stopper-investeringer-i-25-selskaber-pa-grund-af-manglende-klimaambitioner",
+        "Sydinvest": "https://www.sydinvest.dk/investeringsforening/ansvarlighed/eksklusionsliste-selskaber",
+        "PBU": "https://pbu.dk/globalassets/_d-investeringer/c.-ansvarlighed/eksklusionsliste-pr._20-11-2023.pdf",
+        "Sampension": "https://www.sampension.dk/om-sampension/finansiel-information/ansvarlige-investeringer/aabenhed-og-dokumentation---data-om-sampensions-esg-indsats/Ekskluderede-selskaber",
+        "Spar Nord": "https://media.sparnord.dk/dk/omsparnord/csr/eksklusionsliste.pdf",
+        "Sydinvenst": "https://www.sydinvest.dk/investeringsforening/ansvarlighed/eksklusionsliste-selskaber",
+        "Velliv": "https://www.velliv.dk/media/5102/eksklusionslisten-31012024.pdf",
     }
     # Extract all unique organizations from the dataframe column
     unique_orgs = set()

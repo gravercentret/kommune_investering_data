@@ -952,13 +952,13 @@ print(df)
 # df.to_excel(output_excel_file, index=False)
 
 
-# %% Lægernes Pension og Bank
+# %% Lægernes Pension Pension og Bank
 import pdfplumber
 import pandas as pd
 import re
 
 # Define the path to your PDF file
-pdf_file_path = "../data/Eksklusionslister/Lægernes_eksklusionsliste.pdf"
+pdf_file_path = "../data/Eksklusionslister/Lægernes Pension_eksklusionsliste.pdf"
 
 # Initialize an empty list to store the extracted data
 country_abr = []
@@ -1005,7 +1005,7 @@ with pdfplumber.open(pdf_file_path) as pdf:
 
 # Create a DataFrame with the extracted data
 df = pd.DataFrame(selskab_data, columns=["Selskab", "Årsag til eksklusion"])
-df = df.sort_values('Selskab')
+df = df.sort_values("Selskab")
 
 import pandas as pd
 
@@ -1013,16 +1013,21 @@ import pandas as pd
 
 # Define the categories and their associated exclusion criteria
 category_mapping = {
-    'termisk_kul': ['Udvinding af termisk kul', 'Energiproduktion fra termisk kul'],
-    'olie_gas_int': ['Integreret olie & gas'],
-    'olie_gas_prod': ['Olie & gas udvinding & produktion'],
-    'tobak': ['Produktion af tobaksprodukter', 'Distribution af tobaksprodukter', 'Salg af tobaksrelaterede produkter og','services'],
-    'atom': ['Atomvåben'],
-    'vaaben': ['Kontroversielle våben'],
-    'norms': ['Normbrud'],
-    'russia': ['Ruslands invasion af Ukraine'],
-    'israel': ['Israel/Palestina'],
-    'country': ['Landepolitik']
+    "termisk_kul": ["Udvinding af termisk kul", "Energiproduktion fra termisk kul"],
+    "olie_gas_int": ["Integreret olie & gas"],
+    "olie_gas_prod": ["Olie & gas udvinding & produktion"],
+    "tobak": [
+        "Produktion af tobaksprodukter",
+        "Distribution af tobaksprodukter",
+        "Salg af tobaksrelaterede produkter og",
+        "services",
+    ],
+    "atom": ["Atomvåben"],
+    "vaaben": ["Kontroversielle våben"],
+    "norms": ["Normbrud"],
+    "russia": ["Ruslands invasion af Ukraine"],
+    "israel": ["Israel/Palestina"],
+    "country": ["Landepolitik"],
 }
 
 # Initialize an empty list to store the sorted data
@@ -1031,11 +1036,11 @@ sorted_data = []
 # Loop through each category in the desired order
 for category, exclusion_criteria in category_mapping.items():
     # Filter the DataFrame for rows matching the current category's criteria
-    df_filtered = df[df['Årsag til eksklusion'].isin(exclusion_criteria)]
-    
+    df_filtered = df[df["Årsag til eksklusion"].isin(exclusion_criteria)]
+
     # Sort the filtered data alphabetically by the 'Selskab' column
-    df_sorted = df_filtered.sort_values(by='Selskab')
-    
+    df_sorted = df_filtered.sort_values(by="Selskab")
+
     # Add the sorted data to the list
     sorted_data.append(df_sorted)
 
@@ -1044,24 +1049,25 @@ df_final = pd.concat(sorted_data)
 
 # Reset the index of the final DataFrame
 df_final.reset_index(drop=True, inplace=True)
-df['Årsag til eksklusion'].replace(['Salg af tobaksrelaterede produkter og', 'services'], 'Salg af tobaksrelaterede produkter og services')
+df["Årsag til eksklusion"].replace(
+    ["Salg af tobaksrelaterede produkter og", "services"],
+    "Salg af tobaksrelaterede produkter og services",
+)
 
 # Save the DataFrame to an Excel file
-# output_file_path = "../data/Eksklusionslister/Lægernes_eksklusionsliste.xlsx"
+# output_file_path = "../data/Eksklusionslister/Lægernes Pension_eksklusionsliste.xlsx"
 # df_final.to_excel(output_file_path, index=False)
 
 # print(f"Data extraction complete. Saved to {output_file_path}")
 
 
-
-# %% Pædagogernes 
+# %% PBU
 
 import pdfplumber
 import pandas as pd
 
 # Define the path to your PDF file
-pdf_path = '../data/Eksklusionslister/Pædagogernes_eksklusionsliste.pdf'
-
+pdf_path = "../data/Eksklusionslister/PBU_eksklusionsliste.pdf"
 
 
 # Lists of countries with multi-word names
@@ -1078,19 +1084,21 @@ multi_word_land_two = [
 
 multi_word_land_three = ["Isle of Man", "Virgin Isl (UK)"]
 
-reasons = ['Antipersonelminer',
-    'Arbejdstagerrettigheder',
-    'Atomvåben',
-    'Fosfor',
-    'Klima',
-    'Klyngevåben',
-    'Menneskerettigheder',
-    'Business Model',
-    'Tobak',
-    'Våbenhandel',
-    'Våben',
-    'Korruption',
-    'Hvid fosfor']
+reasons = [
+    "Antipersonelminer",
+    "Arbejdstagerrettigheder",
+    "Atomvåben",
+    "Fosfor",
+    "Klima",
+    "Klyngevåben",
+    "Menneskerettigheder",
+    "Business Model",
+    "Tobak",
+    "Våbenhandel",
+    "Våben",
+    "Korruption",
+    "Hvid fosfor",
+]
 
 # Flag to start scraping after the header is found
 start_scraping = False
@@ -1105,11 +1113,11 @@ reason_list = []
 with pdfplumber.open(pdf_path) as pdf:
     for page in pdf.pages:
         text = page.extract_text()
-        lines = text.split('\n')  # Split the page text by lines
-        
+        lines = text.split("\n")  # Split the page text by lines
+
         for line in lines:
             # Start scraping after finding the header
-            if 'ISIN kode Selskab Land Årsag til eksklusion' in line:
+            if "ISIN kode Selskab Land Årsag til eksklusion" in line:
                 start_scraping = True
                 continue  # Skip the header line
 
@@ -1124,7 +1132,7 @@ with pdfplumber.open(pdf_path) as pdf:
                     if reason in remaining_line:
                         found_reasons.append(reason)
                         remaining_line = remaining_line.replace(reason, "").strip()
-                        if remaining_line[-1] == ',':
+                        if remaining_line[-1] == ",":
                             remaining_line = remaining_line.replace(",", "").strip()
 
                 # Join the found reasons into a comma-separated string
@@ -1159,18 +1167,20 @@ with pdfplumber.open(pdf_path) as pdf:
                 country_list.append(country)
 
 # Create a DataFrame from the lists
-df = pd.DataFrame({
-    'ISIN kode': isin_list,
-    'Selskab': company_list,
-    'Land': country_list,
-    'Årsag til eksklusion': reason_list
-})
+df = pd.DataFrame(
+    {
+        "ISIN kode": isin_list,
+        "Selskab": company_list,
+        "Land": country_list,
+        "Årsag til eksklusion": reason_list,
+    }
+)
 
 # Save the DataFrame to an Excel file
-output_file_path = '../data/Eksklusionslister/Pædagogernes_eksklusionsliste.xlsx'
-df.to_excel(output_file_path, index=False)
+# output_file_path = '../data/Eksklusionslister/PBU_eksklusionsliste.xlsx'
+# df.to_excel(output_file_path, index=False)
 
-print(f"Data extraction complete. Saved to {output_file_path}")
+# print(f"Data extraction complete. Saved to {output_file_path}")
 
 
 # %% Spar Nord
@@ -1179,7 +1189,7 @@ import pdfplumber
 import pandas as pd
 
 # Define the path to your PDF file
-pdf_path = '../data/Eksklusionslister/Spar Nord_eksklusionsliste.pdf'
+pdf_path = "../data/Eksklusionslister/Spar Nord_eksklusionsliste.pdf"
 
 # List of exclusion areas (these will appear in the PDF with a number, which we will ignore)
 exclusion_areas = [
@@ -1187,7 +1197,7 @@ exclusion_areas = [
     "Oliesand",
     "Arktisk boring",
     "Kontroversielle våben",
-    "Internationale normer og konventioner"
+    "Internationale normer og konventioner",
 ]
 
 # Initialize lists to store the extracted data
@@ -1202,20 +1212,20 @@ start_scraping = False
 with pdfplumber.open(pdf_path) as pdf:
     for page in pdf.pages:
         text = page.extract_text()
-        lines = text.split('\n')  # Split the page text by lines
-        
+        lines = text.split("\n")  # Split the page text by lines
+
         for line in lines:
             # Check if the line contains any of the exclusion areas
             for exclusion_area in exclusion_areas:
                 if exclusion_area in line:
                     current_exclusion_reason = exclusion_area  # Set the current exclusion reason
                     break  # Move to the next line once the exclusion reason is found
-            
+
             # Check if we are at the "Selskab" header, where the companies start
-            if 'Selskab' in line:
+            if "Selskab" in line:
                 start_scraping = True  # Enable company scraping from this point
                 continue  # Skip the header line itself
-            
+
             # If scraping is active, process the company lines
             if start_scraping and current_exclusion_reason:
                 if line.strip():  # Ignore empty lines
@@ -1224,24 +1234,21 @@ with pdfplumber.open(pdf_path) as pdf:
                     exclusion_reason_list.append(current_exclusion_reason)
 
 # Create a DataFrame from the lists
-df = pd.DataFrame({
-    'Selskab': company_list,
-    'Årsag til eksklusion': exclusion_reason_list
-})
+df = pd.DataFrame({"Selskab": company_list, "Årsag til eksklusion": exclusion_reason_list})
 
 print(df)
 # Save the DataFrame to an Excel file
-output_file_path = '../data/Eksklusionslister/Spar Nord_eksklusionsliste.xlsx'
-df.to_excel(output_file_path, index=False)
+# output_file_path = '../data/Eksklusionslister/Spar Nord_eksklusionsliste.xlsx'
+# df.to_excel(output_file_path, index=False)
 
-print(f"Data extraction complete. Saved to {output_file_path}")
+# print(f"Data extraction complete. Saved to {output_file_path}")
 
-# %% Industriens Pension
+# %% Industriens Pension Pension
 import pdfplumber
 import pandas as pd
 
 # Define the path to your PDF file
-pdf_path = '../data/Eksklusionslister/Industriens_eksklusionsliste.pdf'
+pdf_path = "../data/Eksklusionslister/Industriens Pension_eksklusionsliste.pdf"
 
 
 # Lists of countries with multi-word names
@@ -1259,15 +1266,16 @@ multi_word_land_two = [
 
 multi_word_land_three = ["Isle of Man", "Virgin Isl (UK)"]
 
-multi_word_land_four = ['United States of America']
+multi_word_land_four = ["United States of America"]
 
-reasons = ['Thermal coal extraction',
-    'Labour rights',
-    'Cluster Weapons',
-    'Oil sands extraction',
-    'Human rights',
-    'Nuclear Weapons, NPT',
-    'Anti-Personnel Mines',
+reasons = [
+    "Thermal coal extraction",
+    "Labour rights",
+    "Cluster Weapons",
+    "Oil sands extraction",
+    "Human rights",
+    "Nuclear Weapons, NPT",
+    "Anti-Personnel Mines",
 ]
 
 # Flag to start scraping after the header is found
@@ -1282,11 +1290,11 @@ reason_list = []
 with pdfplumber.open(pdf_path) as pdf:
     for page in pdf.pages:
         text = page.extract_text()
-        lines = text.split('\n')  # Split the page text by lines
-        
+        lines = text.split("\n")  # Split the page text by lines
+
         for line in lines:
             # Start scraping after finding the header
-            if 'Company Country Exclusion' in line:
+            if "Company Country Exclusion" in line:
                 start_scraping = True
                 continue  # Skip the header line
 
@@ -1301,7 +1309,7 @@ with pdfplumber.open(pdf_path) as pdf:
                     if reason in remaining_line:
                         found_reasons.append(reason)
                         remaining_line = remaining_line.replace(reason, "").strip()
-                        if remaining_line[-1] == ',':
+                        if remaining_line[-1] == ",":
                             remaining_line = remaining_line.replace(",", "").strip()
 
                 # Join the found reasons into a comma-separated string
@@ -1331,18 +1339,15 @@ with pdfplumber.open(pdf_path) as pdf:
                 country_list.append(country)
 
 # Create a DataFrame from the lists
-df = pd.DataFrame({
-    'Selskab': company_list,
-    'Land': country_list,
-    'Årsag til eksklusion': reason_list
-})
+df = pd.DataFrame(
+    {"Selskab": company_list, "Land": country_list, "Årsag til eksklusion": reason_list}
+)
 
 # Save the DataFrame to an Excel file
-output_file_path = '../data/Eksklusionslister/Industriens_eksklusionsliste.xlsx'
-df.to_excel(output_file_path, index=False)
+# output_file_path = '../data/Eksklusionslister/Industriens Pension_eksklusionsliste.xlsx'
+# df.to_excel(output_file_path, index=False)
 
-print(f"Data extraction complete. Saved to {output_file_path}")
-
+# print(f"Data extraction complete. Saved to {output_file_path}")
 
 
 # %%

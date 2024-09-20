@@ -167,22 +167,22 @@ df_kilde = df[df["ISIN kode"].notna()]
 # file_save = "../data/Eksklusionslister/Sampension_eksklusionsliste_isin.xlsx"
 # df_Sampension_isin.to_excel(file_save, index=False)
 
-# Lægernes
-# Lægernes_path = "../data/Eksklusionslister/Lægernes_eksklusionsliste.xlsx"
-# df_Lægernes = pd.read_excel(Lægernes_path)
+# Lægernes Pension
+# Lægernes Pension_path = "../data/Eksklusionslister/Lægernes Pension_eksklusionsliste.xlsx"
+# df_Lægernes Pension = pd.read_excel(Lægernes Pension_path)
 
-# df_Lægernes_isin = add_isin_eksklusionsliste(df_kilde, df_Lægernes)
-# file_save = "../data/Eksklusionslister/Lægernes_eksklusionsliste_isin.xlsx"
-# df_Lægernes_isin.to_excel(file_save, index=False)
+# df_Lægernes Pension_isin = add_isin_eksklusionsliste(df_kilde, df_Lægernes Pension)
+# file_save = "../data/Eksklusionslister/Lægernes Pension_eksklusionsliste_isin.xlsx"
+# df_Lægernes Pension_isin.to_excel(file_save, index=False)
 
-# Pædagogernes
-# Pædagogernes_path = "../data/Eksklusionslister/Pædagogernes_eksklusionsliste.xlsx"
-# df_Pædagogernes = pd.read_excel(Pædagogernes_path)
+# PBU
+# PBU_path = "../data/Eksklusionslister/PBU_eksklusionsliste.xlsx"
+# df_PBU = pd.read_excel(PBU_path)
 
-# df_Pædagogernes_isin = add_isin_eksklusionsliste(df_kilde, df_Pædagogernes)
-# df_Pædagogernes_isin['ISIN org'] = df_Pædagogernes['ISIN kode']
-# file_save = "../data/Eksklusionslister/Pædagogernes_eksklusionsliste_isin.xlsx"
-# df_Pædagogernes_isin.to_excel(file_save, index=False)
+# df_PBU_isin = add_isin_eksklusionsliste(df_kilde, df_PBU)
+# df_PBU_isin['ISIN org'] = df_PBU['ISIN kode']
+# file_save = "../data/Eksklusionslister/PBU_eksklusionsliste_isin.xlsx"
+# df_PBU_isin.to_excel(file_save, index=False)
 
 # # Spar_Nord
 # Spar_Nord_path = "../data/Eksklusionslister/Spar Nord_eksklusionsliste.xlsx"
@@ -192,10 +192,18 @@ df_kilde = df[df["ISIN kode"].notna()]
 # file_save = "../data/Eksklusionslister/Spar Nord_eksklusionsliste_isin.xlsx"
 # df_Spar_Nord_isin.to_excel(file_save, index=False)
 
-# Industriens
-Industriens_path = "../data/Eksklusionslister/Industriens_eksklusionsliste.xlsx"
-df_Industriens = pd.read_excel(Industriens_path)
+# # Industriens Pension
+# Industriens Pension_path = "../data/Eksklusionslister/Industriens Pension_eksklusionsliste.xlsx"
+# df_Industriens Pension = pd.read_excel(Industriens Pension_path)
 
-df_Industriens_isin = add_isin_eksklusionsliste(df_kilde, df_Industriens)
-file_save = "../data/Eksklusionslister/Industriens_eksklusionsliste_isin.xlsx"
-df_Industriens_isin.to_excel(file_save, index=False)
+# df_Industriens Pension_isin = add_isin_eksklusionsliste(df_kilde, df_Industriens Pension)
+# file_save = "../data/Eksklusionslister/Industriens Pension_eksklusionsliste_isin.xlsx"
+# df_Industriens Pension_isin.to_excel(file_save, index=False)
+
+# BankInvest
+# BankInvest_path = "../data/Eksklusionslister/BankInvest_eksklusionsliste.xlsx"
+# df_BankInvest = pd.read_excel(BankInvest_path)
+
+# df_BankInvest_isin = add_isin_eksklusionsliste(df_kilde, df_BankInvest)
+# file_save = "../data/Eksklusionslister/BankInvest_eksklusionsliste_isin.xlsx"
+# df_BankInvest_isin.to_excel(file_save, index=False)

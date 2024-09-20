@@ -3,20 +3,33 @@ import pandas as pd
 data_path = "..\data\merged_data_exc_list_and_org.xlsx"
 merged_df = pd.read_excel(data_path)
 
+# Burde være unødvendig nu, da fejlen er renset i grunddata.
 merged_df["Kommune"] = merged_df["Kommune"].str.replace("\xa0", " ", regex=False)
 
 
 # List of relevant organizations
 relevant_organizations = [
-    "FN",
-    "AP Pension",
     "Akademiker Pension",
+    "AP Pension",
     "ATP",
+    "BankInvest",
+    "FN",
+    "Industriens Pension",
+    "Jyske Bank",
+    "LD Fonde",
+    "Lægernes Pension",
     "Lærernes Pension",
     "Nordea",
+    "Nykredit",
+    "PenSam",
     "PensionDanmark",
     "PFA",
+    "PKA",
     "Sydinvest",
+    "PBU",
+    "Sampension",
+    "Spar Nord",
+    "Sydinvenst",
     "Velliv",
 ]
 
@@ -24,14 +37,14 @@ relevant_organizations = [
 # Function to extract information from 'Årsag til eksklusion'
 def extract_organisations(row):
     if pd.isna(row) or row.strip() == "":
-        return "", ""
+        return ""
 
     # Split the column by semicolons
     parts = row.split(";")
 
     # Initialize variables
-    fn_value = ""
-    pension_companies = []
+    # fn_value = ""
+    org_with_list = []
 
     # Loop through each part and extract relevant info
     for part in parts:
@@ -40,22 +53,19 @@ def extract_organisations(row):
 
         # If organization is in the relevant list
         if org_name in relevant_organizations:
-            if org_name == "FN":
-                fn_value = "FN"
-                pension_companies.append(org_name)  # Include FN in 'Problematisk ifølge'
-            else:
-                pension_companies.append(org_name)
+            # if org_name == "FN":
+                # fn_value = "FN"
+                # org_with_list.append(org_name)  # Include FN in 'Problematisk ifølge'
+            org_with_list.append(org_name)
 
     # Create values for new columns
-    pension_value = "; ".join(pension_companies) if pension_companies else ""
+    org_names = "; ".join(org_with_list) if org_with_list else ""
 
-    return fn_value, pension_value
+    return org_names
 
 
 # Apply the extraction function to the DataFrame and create new columns
-merged_df[["Problematisk ifølge FN", "Problematisk ifølge:"]] = merged_df[
-    "Årsag til eksklusion"
-].apply(lambda row: pd.Series(extract_organisations(row)))
+merged_df["Problematisk ifølge:"] = merged_df["Årsag til eksklusion"].apply(lambda row: pd.Series(extract_organisations(row))) #  #"Problematisk ifølge FN",
 
 
 ### Fixing type
@@ -107,36 +117,6 @@ def clean_type(type_value):
 # Apply the function to the 'Type' column
 filled_df["Type"] = filled_df["Type"].apply(clean_type)
 
-# # Predefined dictionary with organizations and their corresponding links
-# org_links = {
-#     "FN":'https://www.un.org/',
-#     "AP Pension":'https://www.appension.dk/',
-#     "Akademiker Pension":'https://www.ap.dk/',
-#     "ATP":'https://www.atp.dk/',
-#     "Lærernes Pension":'https://www.lpension.dk/',
-#     "Nordea":'https://www.nordea.dk/',
-#     "PensionDanmark":'https://www.pensiondanmark.dk/',
-#     "PFA":'https://www.pfa.dk/',
-#     "Sydinvest":'https://www.sydinvest.dk/',
-#     "Velliv":'https://www.velliv.dk/',
-#     # Add more organizations and their links here
-# }
-
-# # Function to generate links based on the 'Problematisk ifølge:' column
-# def generate_links(org_string):
-#     if org_string is not None:
-#         orgs = org_string.split("; ")
-#         print(orgs)
-#         links = []
-#         for org in orgs:
-#             if org in org_links:
-#                 links.append(f"{org_links[org]}")
-#         print(links)
-#         return " \n\n".join(links) if links else ""
-
-#     # Create a new column 'Link til eksklusionsliste'
-
-# filled_df['Link til eksklusionsliste'] = filled_df['Problematisk ifølge:'].apply(generate_links)
 
 # Save the merged DataFrame to a new Excel file if needed
 filled_df.to_excel("../data/full_data.xlsx", index=False)

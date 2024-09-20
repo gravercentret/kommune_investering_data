@@ -5,6 +5,7 @@ import streamlit as st
 import pandas as pd
 from openai import OpenAI
 
+
 def get_data():
     engine = create_engine("sqlite:///../src/investerings_database.db")
 
@@ -21,6 +22,7 @@ def get_data():
 
     return df_polars
 
+
 # Function to convert dataframe to text
 def dataframe_to_text(df):
     """
@@ -30,8 +32,14 @@ def dataframe_to_text(df):
     text = df.to_json(index=False)  # Convert DataFrame to string (or JSON if needed)
     return text
 
+
 # Function to generate text using OpenAI API
-def generate_text_from_dataframe(df, api_key, prompt_template="", system_prompt="Du er en assistent, der skal svare på dansk og hjælpe journalister."):
+def generate_text_from_dataframe(
+    df,
+    api_key,
+    prompt_template="",
+    system_prompt="Du er en assistent, der skal svare på dansk og hjælpe journalister.",
+):
     """
     Takes a dataframe and sends it to the OpenAI API to generate text.
     """
@@ -41,37 +49,34 @@ def generate_text_from_dataframe(df, api_key, prompt_template="", system_prompt=
 
     # Create a prompt by combining the template and the dataframe text
     prompt = f"{prompt_template}\n\n{df_text}"
-    
+
     client = OpenAI(api_key=api_key)
 
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": system_prompt},
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
+            {"role": "user", "content": prompt},
+        ],
     )
 
     # Extract the generated text
     # generated_text = completion.choices[0].text.strip()
     print(completion.choices[0].message)
-    
+
     return completion.choices[0].message
 
 
-# system_prompt = """Du er en assistent, der skal hjælpe en journalist. 
-#     Lav en opsummering, der først skal beskrive det data, 
-#     som journalisten sender. Der vil handle om investeringer 
-#     fra en dansk kommune eller region. I kolonnen 
-#     'Problematisk ifølge:' fremgår hvilke organisationer, 
-#     som har sat det angivne selskab på deres eksklusionsliste. 
-#     Fortæl journalisten hvor mange investeringer, der er problematiske, 
-#     hvilke beløb, der er problematiske samt totalt investeret, 
+# system_prompt = """Du er en assistent, der skal hjælpe en journalist.
+#     Lav en opsummering, der først skal beskrive det data,
+#     som journalisten sender. Der vil handle om investeringer
+#     fra en dansk kommune eller region. I kolonnen
+#     'Problematisk ifølge:' fremgår hvilke organisationer,
+#     som har sat det angivne selskab på deres eksklusionsliste.
+#     Fortæl journalisten hvor mange investeringer, der er problematiske,
+#     hvilke beløb, der er problematiske samt totalt investeret,
 #     og beskriv overordnet årsager til, at de er problematiske.
-#     Lav det som et 
+#     Lav det som et
 #     kort og præcist resumé i en sammenhængende tekst.""" # gerne i punktform.
 
 system_prompt = """Du er en assistent, der skal hjælpe en journalist. 
@@ -82,41 +87,41 @@ system_prompt = """Du er en assistent, der skal hjælpe en journalist.
     som har sat det angivne selskab på deres eksklusionsliste. 
     Fortæl journalisten hvorfor investeringerne er problematiske. 
     Lav det som et kort og præcist resumé i en sammenhængende tekst.
-    """ # gerne i punktform.
+    """  # gerne i punktform.
 
 # Your OpenAI API key (replace with your actual key)
-with open('api_key.txt') as f:
+with open("api_key.txt") as f:
     api_key = f.read()
 
 # Get data
 df_pl = get_data()
 df_pd = df_pl.to_pandas()
-kommune = 'Tønder'
-df_test = df_pd[df_pd['Kommune'] == kommune]
+kommune = "Tønder"
+df_test = df_pd[df_pd["Kommune"] == kommune]
 antal_inv = len(df_test)
-sum_inv = sum(df_test['Markedsværdi (DKK)'])
-antal_inv_prop = len(df_test[df_test['Problematisk ifølge:'].notna()])
-sum_inv_prop = sum(df_test[df_test['Problematisk ifølge:'].notna()]['Markedsværdi (DKK)'])
+sum_inv = sum(df_test["Markedsværdi (DKK)"])
+antal_inv_prop = len(df_test[df_test["Problematisk ifølge:"].notna()])
+sum_inv_prop = sum(df_test[df_test["Problematisk ifølge:"].notna()]["Markedsværdi (DKK)"])
 
-df_prop = df_test[df_test['Problematisk ifølge:'].notna()]
+df_prop = df_test[df_test["Problematisk ifølge:"].notna()]
 
 # Optional prompt template, you can give instructions here
-# prompt_template = f"""Opsummer investeringerne foretaget af {kommune}. Her er ekstra information om data. 
-#                         Der er i alt lavet {antal_inv} investeringer med en total værdi af {round(sum_inv)}. 
-#                         Der er {round(antal_inv_prop)} problematiske investeringer med en værdi af {sum_inv_prop}. 
-#                         Skriv et kort resumé med fokus på, hvorfor de er problematiske. 
-#                     """  
+# prompt_template = f"""Opsummer investeringerne foretaget af {kommune}. Her er ekstra information om data.
+#                         Der er i alt lavet {antal_inv} investeringer med en total værdi af {round(sum_inv)}.
+#                         Der er {round(antal_inv_prop)} problematiske investeringer med en værdi af {sum_inv_prop}.
+#                         Skriv et kort resumé med fokus på, hvorfor de er problematiske.
+#                     """
 
 prompt_template = f"""Opsummer investeringerne foretaget af {kommune}. Fokuser på, hvem der har investeringerne på
                         deres eksklusionsliste, og hvorfor de er der.
-                    """  
+                    """
 
 
 # Generate text based on the dataframe
 result = generate_text_from_dataframe(df_prop, api_key, prompt_template, system_prompt)
 print(result.content)
 
-#Bornholm = "**Opsummering af investeringer fra Bornholm:**\n\n- **Total antal investeringer:** 1.751\n- **Total værdi af investeringer:** 85.177.238 DKK\n- **Antal problematiske investeringer:** 21\n- **Samlet værdi af problematiske investeringer:** 577.834 DKK\n\n**Overordnede årsager til problematiske investeringer:**\n\n- Investeringerne er problematiske, da de er knyttet til selskaber, som har været involveret i aktiviteter, der strider imod menneskerettigheder eller forårsager omfattende miljøskader.\n- Flere organisationer, herunder *Lærerens Pension* og *FN*, har vurderet, at disse selskaber udviser normbrud ved at ignorere sociale og miljømæssige ansvar.\n\n**Eksempler på problematiske områder:**\n- Levering af tjenester, der understøtter opretholdelsen af bosættelser og transport.\n- Anvendelse af naturressourcer, især vand og land, for kommercielle formål.\n- Overtrædelser af arbejdstagerrettigheder i forbindelse med ILO-konventioner. \n\nBaseret på denne information kan der være grund til at overveje revurdering af investeringerne for at sikre overholdelse af etiske standarder og forvaltning af Bornholm's investeringer."
+# Bornholm = "**Opsummering af investeringer fra Bornholm:**\n\n- **Total antal investeringer:** 1.751\n- **Total værdi af investeringer:** 85.177.238 DKK\n- **Antal problematiske investeringer:** 21\n- **Samlet værdi af problematiske investeringer:** 577.834 DKK\n\n**Overordnede årsager til problematiske investeringer:**\n\n- Investeringerne er problematiske, da de er knyttet til selskaber, som har været involveret i aktiviteter, der strider imod menneskerettigheder eller forårsager omfattende miljøskader.\n- Flere organisationer, herunder *Lærerens Pension* og *FN*, har vurderet, at disse selskaber udviser normbrud ved at ignorere sociale og miljømæssige ansvar.\n\n**Eksempler på problematiske områder:**\n- Levering af tjenester, der understøtter opretholdelsen af bosættelser og transport.\n- Anvendelse af naturressourcer, især vand og land, for kommercielle formål.\n- Overtrædelser af arbejdstagerrettigheder i forbindelse med ILO-konventioner. \n\nBaseret på denne information kan der være grund til at overveje revurdering af investeringerne for at sikre overholdelse af etiske standarder og forvaltning af Bornholm's investeringer."
 
 # Tønder = """**Opsummering af Tønders investeringer:**
 # - **Totalt antal investeringer:** 1272
@@ -130,10 +135,8 @@ print(result.content)
 #   - Brud på menneskerettigheder
 #   - Involvering i kontroversielle våben
 #   - Normovertrædelser ifølge internationale standarder
-      
+
 # Disse problematiske investeringer kan medføre negativ opmærksomhed og potentielle omkostninger for kommunen ifølge principperne for ansvarlig investering og social ansvarlighed."""
-
-
 
 
 # from openai import OpenAI

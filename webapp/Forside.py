@@ -20,6 +20,28 @@ from src.config import set_pandas_options, set_streamlit_options
 set_pandas_options()
 set_streamlit_options()
 
+# Function to load and inject CSS into the Streamlit app
+# def load_css(file_name):
+#     with open(file_name) as f:
+        # st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# load_css("webapp/style.css")
+
+st.markdown(f"""
+    <style>
+    /* Change the background color of the main container */
+    .main {{
+        background-color: #ffffff;
+    }}
+
+    /* Customize the font and text color for better readability */
+    h1, h2, h3, h4, h5, h6, p {{
+        color: #333; /* Darker text color for better contrast */
+        font-family: Arial, sans-serif; /* Choose your preferred font */
+    }}
+    </style>
+""", unsafe_allow_html=True)
+
 if "df_pl" not in st.session_state:
     st.session_state.df_pl = get_data()
 
@@ -133,23 +155,35 @@ with col1:
 # Column 2: Number of problematic investments
 with col2:
     with st.container(border=True):
-        st.subheader("Antal investeringer udpeget som problematiske:")
+        col2_1, col2_2, col2_3 = st.columns(3)
 
-        # Count the rows where 'Problematisk ifølge:' is not empty
-        problematic_count = filtered_df.filter(
-            filtered_df["Problematisk ifølge:"].is_not_null()
-        ).shape[0]
+        with col2_1:
+            with st.container(border=True):
+                st.markdown("***Antal investeringer udpeget som problematiske:***")
 
-        # Display the number in red
-        st.markdown(f'<h1 style="color:red;">{problematic_count}</h1>', unsafe_allow_html=True)
+                # Count the rows where 'Problematisk ifølge:' is not empty
+                problematic_count = filtered_df.filter(
+                    filtered_df["Problematisk ifølge:"].is_not_null()
+                ).shape[0]
 
-        st.subheader("Antal investeringer værd at undersøge nærmere:")
+                # Display the number in red
+                st.markdown(f'<h1 style="color:red;">{problematic_count}</h1>', unsafe_allow_html=True)
+        with col2_2:
+            with st.container(border=True):
+                st.markdown("***Antal investeringer fra ekskluderede lande:***")
 
-        # Display the second number in yellow
-        st.markdown(
-            f'<h1 style="color:orange;">{problematic_count + 4}</h1>', unsafe_allow_html=True
-        )
+                # Display the second number in yellow
+                st.markdown(
+                    f'<h1 style="color:orange;">{problematic_count + 4}</h1>', unsafe_allow_html=True
+                )
+        with col2_3:
+            with st.container(border=True):
+                st.markdown("***Antal investeringer værd at undersøge nærmere:***")
 
+                # Display the second number in yellow
+                st.markdown(
+                    f'<h1 style="color:yellow;">{problematic_count + 100}</h1>', unsafe_allow_html=True
+                )
     # Nøgletal
     with st.container(border=True):
         st.subheader("Nøgletal")
@@ -159,31 +193,48 @@ with col2:
         st.write(f"**Antal investeringer:** {antal_inv}")
 
         # Calculate the total sum of 'Markedsværdi (DKK)' and display it in both DKK and millions
-        total_markedsvaerdi = filtered_df.select(pl.sum("Markedsværdi (DKK)")).to_pandas().iloc[0, 0]
+        total_markedsvaerdi = (
+            filtered_df.select(pl.sum("Markedsværdi (DKK)")).to_pandas().iloc[0, 0]
+        )
         markedsvaerdi_million = total_markedsvaerdi / 1_000_000
-        st.write(f"**Total Markedsværdi (DKK):** {total_markedsvaerdi:,.2f} ({markedsvaerdi_million:,.1f} millioner)")
+        st.write(
+            f"**Total Markedsværdi (DKK):** {total_markedsvaerdi:,.2f} ({markedsvaerdi_million:,.1f} millioner)"
+        )
 
         # Filter for problematic investments and calculate the total sum of their 'Markedsværdi (DKK)'
         prob_df = filtered_df.filter(filtered_df["Problematisk ifølge:"].is_not_null())
         prob_markedsvaerdi = prob_df.select(pl.sum("Markedsværdi (DKK)")).to_pandas().iloc[0, 0]
         prob_markedsvaerdi_million = prob_markedsvaerdi / 1_000_000
-        st.write(f"**Markedsværdi af problematiske investeringer:** {prob_markedsvaerdi:,.2f} ({prob_markedsvaerdi_million:,.1f} millioner)")
+        st.write(
+            f"**Markedsværdi af problematiske investeringer:** {prob_markedsvaerdi:,.2f} ({prob_markedsvaerdi_million:,.1f} millioner)"
+        )
 
 
 # Display the dataframe below the three columns
 # st.dataframe(filtered_df.style.map(color_one_column, subset=['Problematisk ifølge:']))
 # [['Kommune', 'Udsteder', 'Markedsværdi (DKK)', 'Type', 'Problematisk ifølge:', 'Årsag til eksklusion']]
-st.dataframe(filtered_df[['OBS','Kommune', 'Udsteder', 'Markedsværdi (DKK)', 'Type', 'Problematisk ifølge:', 'Årsag til eksklusion']],
-             column_config={
-                 'Kommune': 'Kommune',
-                 'Udsteder':'Udsteder',
-                 'Markedsværdi (DKK)': st.column_config.NumberColumn(format="%.2f"),
-                 'Type':'Type',
-                 'Problematisk ifølge:':'Problematisk ifølge:',
-                 'Årsag til eksklusion': st.column_config.TextColumn(width="large")
-             },
-             hide_index=True
-             )
+st.dataframe(
+    filtered_df[
+        [
+            "OBS",
+            "Kommune",
+            "Udsteder",
+            "Markedsværdi (DKK)",
+            "Type",
+            "Problematisk ifølge:",
+            "Årsag til eksklusion",
+        ]
+    ],
+    column_config={
+        "Kommune": "Kommune",
+        "Udsteder": st.column_config.TextColumn(width="medium"),
+        "Markedsværdi (DKK)": st.column_config.NumberColumn(format="%.2f"),
+        "Type": "Type",
+        "Problematisk ifølge:": st.column_config.TextColumn(width="medium"),
+        "Årsag til eksklusion": st.column_config.TextColumn(width="large"),
+    },
+    hide_index=True,
+)
 
 # Call the function to display relevant links based on the 'Problematisk ifølge:' column
 generate_organization_links(filtered_df, "Problematisk ifølge:")
