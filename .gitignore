@@ -2,3 +2,5 @@
 build
 *.egg-info
 .vscode/
+__pycache__
+dev/api_key.txt

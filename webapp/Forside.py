@@ -5,7 +5,14 @@ import numpy as np
 import re
 from io import BytesIO
 import matplotlib.pyplot as plt
-from utils.data_prep import get_data, get_unique_kommuner, filter_dataframe_by_choice, generate_organization_links, filter_df_by_search, fix_column_types
+from utils.data_prep import (
+    get_data,
+    get_unique_kommuner,
+    filter_dataframe_by_choice,
+    generate_organization_links,
+    filter_df_by_search,
+    fix_column_types,
+)
 from utils.styling import color_rows_limited
 from src.config import set_pandas_options, set_streamlit_options
 
@@ -32,7 +39,12 @@ dropdown_options = [all_values, municipalities, regions] + unique_kommuner
 
 # Sidebar with selection options
 with st.sidebar:
-    user_choice = st.selectbox("Vælg område:", dropdown_options, help="Skriv i boksen for at søge efter bestemt kommune/region.", placeholder='Vælg en kommune/region.')
+    user_choice = st.selectbox(
+        "Vælg område:",
+        dropdown_options,
+        help="Skriv i boksen for at søge efter bestemt kommune/region.",
+        placeholder="Vælg en kommune/region.",
+    )
 
     search_query = st.text_input("Søg i tabellen:", "")
 
@@ -49,6 +61,7 @@ filtered_df = filter_dataframe_by_choice(st.session_state.df_pl, user_choice)
 filtered_df = filter_df_by_search(filtered_df, search_query)
 
 filtered_df = fix_column_types(filtered_df)
+
 
 # Sort first by 'is_problematic' (so that True comes first), then by 'Kommune' and 'ISIN kode' alphabetically
 filtered_df = filtered_df.sort(["Problematisk ifølge:", "Kommune", "ISIN kode"], nulls_last=True)
@@ -68,45 +81,50 @@ with col1:
     st.subheader("Fordeling af typer (Markedsværdi)")
 
     # Group the data by 'Type' and sum the 'Markedsværdi (DKK)'
-    type_distribution = filtered_df.group_by("Type").agg(
-        pl.col("Markedsværdi (DKK)").sum().alias("Total Markedsværdi")
-    ).to_pandas()  # Convert to pandas for plotting
+    type_distribution = (
+        filtered_df.group_by("Type")
+        .agg(pl.col("Markedsværdi (DKK)").sum().alias("Total Markedsværdi"))
+        .to_pandas()
+    )  # Convert to pandas for plotting
 
     # Drop rows with missing values (NaN) in 'Total Markedsværdi' or 'Type'
     type_distribution = type_distribution.dropna(subset=["Total Markedsværdi", "Type"])
 
     # Combine 'Andet' and 'Ikke angivet' into one category
-    type_distribution["Type"] = type_distribution["Type"].replace({
-        'Andet': 'Andet/Ikke angivet', 
-        'Ikke angivet': 'Andet/Ikke angivet'
-    })
+    type_distribution["Type"] = type_distribution["Type"].replace(
+        {"Andet": "Andet/Ikke angivet", "Ikke angivet": "Andet/Ikke angivet"}
+    )
 
     # Re-aggregate the data to group by the combined category, summing only the numeric column
-    type_distribution = type_distribution.groupby("Type", as_index=False)["Total Markedsværdi"].sum()
+    type_distribution = type_distribution.groupby("Type", as_index=False)[
+        "Total Markedsværdi"
+    ].sum()
 
     # Define a color mapping for consistent colors
     color_mapping = {
-        'Aktie': 'cornflowerblue',
-        'Obligation': 'lightgreen',
-        'Virksomhedsobligation': 'lightblue',
-        'Andet/Ikke angivet': 'lightgray'
+        "Aktie": "cornflowerblue",
+        "Obligation": "lightgreen",
+        "Virksomhedsobligation": "lightblue",
+        "Andet/Ikke angivet": "lightgray",
     }
 
     # Match the colors with the values in 'Type'
-    colors = [color_mapping.get(type_val, 'gray') for type_val in type_distribution["Type"]]
+    colors = [color_mapping.get(type_val, "gray") for type_val in type_distribution["Type"]]
 
     # Plot the pie chart using matplotlib
     fig, ax = plt.subplots()
     ax.pie(
-        type_distribution["Total Markedsværdi"], 
-        colors=colors, 
-        startangle=0, 
-        autopct='%1.1f%%',
-        textprops={'fontsize': 14}
+        type_distribution["Total Markedsværdi"],
+        colors=colors,
+        startangle=0,
+        autopct="%1.1f%%",
+        textprops={"fontsize": 14},
     )
 
     # Add a legend with the 'Type' values
-    ax.legend(type_distribution["Type"], title="Type", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+    ax.legend(
+        type_distribution["Type"], title="Type", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1)
+    )
 
     # Display the pie chart in Streamlit
     st.pyplot(fig)
@@ -116,83 +134,72 @@ with col1:
 with col2:
     with st.container(border=True):
         st.subheader("Antal investeringer udpeget som problematiske:")
-        
+
         # Count the rows where 'Problematisk ifølge:' is not empty
-        problematic_count = filtered_df.filter(filtered_df["Problematisk ifølge:"].is_not_null()).shape[0]
-        
+        problematic_count = filtered_df.filter(
+            filtered_df["Problematisk ifølge:"].is_not_null()
+        ).shape[0]
+
         # Display the number in red
         st.markdown(f'<h1 style="color:red;">{problematic_count}</h1>', unsafe_allow_html=True)
 
         st.subheader("Antal investeringer værd at undersøge nærmere:")
 
         # Display the second number in yellow
-        st.markdown(f'<h1 style="color:orange;">{problematic_count + 4}</h1>', unsafe_allow_html=True)
+        st.markdown(
+            f'<h1 style="color:orange;">{problematic_count + 4}</h1>', unsafe_allow_html=True
+        )
 
-# # Column 3: Key financial figures ('Nøgletal')
-# with col3:
+    # Nøgletal
     with st.container(border=True):
         st.subheader("Nøgletal")
-        
-        # Calculate key numbers like the total sum of 'Markedsværdi (DKK)' and other statistics
+
+        # Calculate the total number of investments
+        antal_inv = len(filtered_df)
+        st.write(f"**Antal investeringer:** {antal_inv}")
+
+        # Calculate the total sum of 'Markedsværdi (DKK)' and display it in both DKK and millions
         total_markedsvaerdi = filtered_df.select(pl.sum("Markedsværdi (DKK)")).to_pandas().iloc[0, 0]
-
-        # Calculate the value in millions
         markedsvaerdi_million = total_markedsvaerdi / 1_000_000
-
-        # Display the total value and the value in millions
         st.write(f"**Total Markedsværdi (DKK):** {total_markedsvaerdi:,.2f} ({markedsvaerdi_million:,.1f} millioner)")
 
-# # Convert to Pandas for displaying in Streamlit
-# df = filtered_df.to_pandas()
-# df.index = np.arange(1, len(df) + 1)
+        # Filter for problematic investments and calculate the total sum of their 'Markedsværdi (DKK)'
+        prob_df = filtered_df.filter(filtered_df["Problematisk ifølge:"].is_not_null())
+        prob_markedsvaerdi = prob_df.select(pl.sum("Markedsværdi (DKK)")).to_pandas().iloc[0, 0]
+        prob_markedsvaerdi_million = prob_markedsvaerdi / 1_000_000
+        st.write(f"**Markedsværdi af problematiske investeringer:** {prob_markedsvaerdi:,.2f} ({prob_markedsvaerdi_million:,.1f} millioner)")
 
-# ### Fritekstsøgning
-# Free text search input
-# search_query = st.text_input("Søg i tabellen:", "")
-
-# df = filtered_df
-
-# # Use case-insensitive search if query is provided
-# if search_query:
-#     # Create a case-insensitive regex search pattern
-#     search_pattern = f"(?i){search_query}"
-
-#     # Replace NA values with empty strings and cast columns to string
-#     df = df.with_columns([pl.col(col).fill_null("").cast(str) for col in df.columns])
-
-#     # Combine conditions across all columns using logical OR (|) operator
-#     filter_expr = None
-#     for col in df.columns:
-#         condition = pl.col(col).str.contains(search_pattern)
-#         filter_expr = condition if filter_expr is None else filter_expr | condition
-
-#     # Apply the filter
-#     filtered_df = df.filter(filter_expr)
-# else:
-#     filtered_df = df
-
-# Apply the color_rows_limited function to the top 1000 rows
-# filtered_df = filtered_df.style.apply(lambda row: color_rows_limited(row, row.name), axis=1)
-def color_one_column(val):
-    color = 'red' if val != None else ''
-    return f'background-color: {color}'
 
 # Display the dataframe below the three columns
 # st.dataframe(filtered_df.style.map(color_one_column, subset=['Problematisk ifølge:']))
-st.dataframe(filtered_df)
+# [['Kommune', 'Udsteder', 'Markedsværdi (DKK)', 'Type', 'Problematisk ifølge:', 'Årsag til eksklusion']]
+st.dataframe(filtered_df[['OBS','Kommune', 'Udsteder', 'Markedsværdi (DKK)', 'Type', 'Problematisk ifølge:', 'Årsag til eksklusion']],
+             column_config={
+                 'Kommune': 'Kommune',
+                 'Udsteder':'Udsteder',
+                 'Markedsværdi (DKK)': st.column_config.NumberColumn(format="%.2f"),
+                 'Type':'Type',
+                 'Problematisk ifølge:':'Problematisk ifølge:',
+                 'Årsag til eksklusion': st.column_config.TextColumn(width="large")
+             },
+             hide_index=True
+             )
 
 # Call the function to display relevant links based on the 'Problematisk ifølge:' column
 generate_organization_links(filtered_df, "Problematisk ifølge:")
 
+
 # Function to convert dataframe to Excel and create a downloadable file
 def to_excel(filtered_df):
     output = BytesIO()
-    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
         filtered_df.to_excel(writer, index=False)
     processed_data = output.getvalue()
     return processed_data
 
+
 filtered_df = filtered_df.to_pandas()
+
 # Convert dataframe to Excel
 excel_data = to_excel(filtered_df)
 
@@ -200,6 +207,9 @@ excel_data = to_excel(filtered_df)
 st.download_button(
     label="Download til Excel",
     data=excel_data,
-    file_name=f'Investeringer for {user_choice} og {search_query}.xlsx',
-    mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    file_name=f"Investeringer for {user_choice}{search_query}.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 )
+# st.markdown("Bornholm har foretaget et bredt spektrum af investeringer, der spænder over forskellige typer værdipapirer, herunder aktier og obligationer. Nedenfor er en opsummering af de vigtigste data:\n\n### Oversigt over investeringerne:\n- **Antal diverse investeringer:** 1755\n- **Type:** Overvejende aktier og obligationer, med en præsentation tilknyttet forskellige virksomheder og statslige organisationer.\n\n### Kategori for investeringerne:\n- Aktier: Stort fokus på aktier i virksomheder som **Coca-Cola HBC AG**, **Nestlé S.A.**, og **Volksbank Wien AG**.\n- Obligationer: Investeringer i forskellige statsobligationer, også fra danske udstedere som **Realkredit Danmark** og **Nykredit**.\n\n### Markedsværdi:\n- **Total markedsværdi:** Varieret, med nogle investeringer med en betydelig individuel værdi, f.eks. obligationer fra **Erste Group Bank AG** og aktier i **Novozymes**.\n\n### Problematisk investering:\n- Flere af investeringerne er erklæret problematiske ifølge visse investeringsprincipper og etiske retningslinjer. Dette drejer sig ofte om investeringer i virksomheder, der er involveret i kontroversielle aktiviteter, som for eksempel produktion af våben.\n\n### Udelukkelseskriterier:\n- Der er anvendt kriterier omkring menneskerettigheder og miljømæssige normer, specielt hvad angår investeringer, der involverer våbenproduktion og virksomheder uden klart ansvar over for sociale og miljømæssige virkninger.\n\n### Samlet indtryk:\nBornholms investeringsstrategi viser en veldiversificeret portefølje med stærk tilstedeværelse i både aktier og obligationer, men også en opmærksomhed på etiske standarder og bæredygtighed. Det er væsentligt at bemærke, at der er en aktiv vurdering af de etiske konsekvenser af investeringerne, hvilket reflekterer en ansvarlig investeringspraksis.")
+
+# st.markdown("Her er en opsummering af investeringsdata for Bornholm:\n\n- **Antal problematiske investeringer**: 2 \n- **Samlet problematiske beløb**: 86.114.982,7 DKK\n- **Total investeret beløb**: 1.687.896.626,05 DKK\n- **Problematisk ifølge organisationer**: Lærerens Pension, ATP\n- **Årsager til investeringerne**:\n  - Lærerens Pension: **Kontroversielle våben**\n  - ATP: **Brud på menneskerettigheder** og normer i forbindelse med eksklusion.\n\nOverordnet set stammer problemerne fra manglende overholdelse af menneskerettighederne og forbindelser til kontroversielle våben i disse investeringer.")

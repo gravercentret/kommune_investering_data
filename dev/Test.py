@@ -27,7 +27,6 @@ styled_df = df.style.apply(color_rows, axis=1)
 st.dataframe(styled_df)
 
 
-
 # # Display basic information
 # total_rows = filtered_df.shape[0]
 # total_markedsværdi = filtered_df["Markedsværdi (DKK)"].sum()

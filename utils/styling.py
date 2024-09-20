@@ -11,6 +11,7 @@ def color_rows_limited(row, row_index):
     else:
         return [""] * len(row)  # No styling for rows beyond 1000
 
+
 def color_one_column(val):
-    color = 'red' if val != None else ''
-    return f'background-color: {color}'
+    color = "red" if val != None else ""
+    return f"background-color: {color}"
