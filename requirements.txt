@@ -1,7 +1,10 @@
 streamlit
+nbstripout
 matplotlib
 sqlalchemy
 polars
 openai
 matplotlib
 xlsxwriter
+openpyxl
+black

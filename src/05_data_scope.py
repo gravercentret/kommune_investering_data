@@ -54,8 +54,8 @@ def extract_organisations(row):
         # If organization is in the relevant list
         if org_name in relevant_organizations:
             # if org_name == "FN":
-                # fn_value = "FN"
-                # org_with_list.append(org_name)  # Include FN in 'Problematisk ifølge'
+            # fn_value = "FN"
+            # org_with_list.append(org_name)  # Include FN in 'Problematisk ifølge'
             org_with_list.append(org_name)
 
     # Create values for new columns
@@ -65,7 +65,9 @@ def extract_organisations(row):
 
 
 # Apply the extraction function to the DataFrame and create new columns
-merged_df["Problematisk ifølge:"] = merged_df["Årsag til eksklusion"].apply(lambda row: pd.Series(extract_organisations(row))) #  #"Problematisk ifølge FN",
+merged_df["Problematisk ifølge:"] = merged_df["Årsag til eksklusion"].apply(
+    lambda row: pd.Series(extract_organisations(row))
+)  #  #"Problematisk ifølge FN",
 
 
 ### Fixing type

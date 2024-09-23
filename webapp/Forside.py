@@ -23,27 +23,14 @@ set_streamlit_options()
 # Function to load and inject CSS into the Streamlit app
 # def load_css(file_name):
 #     with open(file_name) as f:
-        # st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+# st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # load_css("webapp/style.css")
 
-st.markdown(f"""
-    <style>
-    /* Change the background color of the main container */
-    .main {{
-        background-color: #ffffff;
-    }}
-
-    /* Customize the font and text color for better readability */
-    h1, h2, h3, h4, h5, h6, p {{
-        color: #333; /* Darker text color for better contrast */
-        font-family: Arial, sans-serif; /* Choose your preferred font */
-    }}
-    </style>
-""", unsafe_allow_html=True)
-
 if "df_pl" not in st.session_state:
     st.session_state.df_pl = get_data()
+
+st.logo("webapp/images/GC_navnetraek_Lille_Blaa_RGB.png")
 
 # Title of the app
 st.title("Investeringer")
@@ -167,14 +154,17 @@ with col2:
                 ).shape[0]
 
                 # Display the number in red
-                st.markdown(f'<h1 style="color:red;">{problematic_count}</h1>', unsafe_allow_html=True)
+                st.markdown(
+                    f'<h1 style="color:red;">{problematic_count}</h1>', unsafe_allow_html=True
+                )
         with col2_2:
             with st.container(border=True):
                 st.markdown("***Antal investeringer fra ekskluderede lande:***")
 
                 # Display the second number in yellow
                 st.markdown(
-                    f'<h1 style="color:orange;">{problematic_count + 4}</h1>', unsafe_allow_html=True
+                    f'<h1 style="color:orange;">{problematic_count + 4}</h1>',
+                    unsafe_allow_html=True,
                 )
         with col2_3:
             with st.container(border=True):
@@ -182,7 +172,8 @@ with col2:
 
                 # Display the second number in yellow
                 st.markdown(
-                    f'<h1 style="color:yellow;">{problematic_count + 100}</h1>', unsafe_allow_html=True
+                    f'<h1 style="color:yellow;">{problematic_count + 100}</h1>',
+                    unsafe_allow_html=True,
                 )
     # Nøgletal
     with st.container(border=True):

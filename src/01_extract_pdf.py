@@ -47,7 +47,7 @@ df = pd.DataFrame(data, columns=["Selskab", "Årsag til eksklusion"])
 
 print(df)
 
-file_save = "../data/Eksklusionslister/Velliv_eksklusionsliste.xlsx"
+# file_save = "../data/Eksklusionslister/Velliv_eksklusionsliste.xlsx"
 df.to_excel(file_save, index=False)
 
 # %% ATP - Get Keywords
@@ -505,8 +505,8 @@ df["Årsag til eksklusion"] = df["Årsag til eksklusion"].str.replace("\n", " ")
 df["Årsag til eksklusion"] = df["Årsag til eksklusion"].str.replace("- -", "")
 
 # Save the DataFrame to an Excel file
-output_file_path = "../data/Eksklusionslister/Jyske Bank_eksklusionsliste.xlsx"
-df.to_excel(output_file_path, index=False)
+# output_file_path = "../data/Eksklusionslister/Jyske Bank_eksklusionsliste.xlsx"
+# df.to_excel(output_file_path, index=False)
 
 print(f"Data successfully extracted and saved to {output_file_path}")
 
@@ -588,7 +588,7 @@ def extract_filtered_exclusion_list(pdf_path):
 df = extract_filtered_exclusion_list(pdf_path)
 
 # Save the DataFrame to an Excel file
-df.to_excel("../data/Eksklusionslister/DanskeBank_eksklusionsliste.xlsx", index=False)
+# df.to_excel("../data/Eksklusionslister/DanskeBank_eksklusionsliste.xlsx", index=False)
 
 print("Data successfully extracted and saved to 'danica_pension_exclusion_list.xlsx'")
 
@@ -670,7 +670,7 @@ df = df.drop(0)
 df = df.rename(columns={"Problematik": "Årsag til eksklusion"})
 
 # Save the DataFrame to an Excel file
-df.to_excel("../data/Eksklusionslister/LD Fonde_eksklusionsliste.xlsx", index=False)
+# df.to_excel("../data/Eksklusionslister/LD Fonde_eksklusionsliste.xlsx", index=False)
 
 # print(f"Data extraction complete. Saved to {output_file_path}")
 
@@ -734,7 +734,7 @@ df.drop(["Kriterie", "Årsag"], axis=1, inplace=True)
 
 display(df)
 # Save the DataFrame to an Excel file
-df.to_excel("../data/Eksklusionslister/BankInvest_eksklusionsliste.xlsx", index=False)
+# df.to_excel("../data/Eksklusionslister/BankInvest_eksklusionsliste.xlsx", index=False)
 
 # print("Table extracted and saved to BankInvest_exclusion_list.xlsx")
 
@@ -776,7 +776,7 @@ df = pd.DataFrame(data, columns=expected_columns)
 display(df)
 
 # Save the DataFrame to an Excel file
-output_path = "../data/Eksklusionslister/Sparinvest_eksklusionsliste.xlsx"
+# output_path = "../data/Eksklusionslister/Sparinvest_eksklusionsliste.xlsx"
 df.to_excel(output_path, index=False)
 
 print(f"Table successfully extracted and saved to {output_path}")
@@ -835,7 +835,7 @@ def scrape_pensam_pdf(pdf_file_path, output_file):
 
 # Example usage:
 pdf_file = "../data/Eksklusionslister/PenSam_eksklusionsliste.pdf"
-output_excel_file = "../data/Eksklusionslister/PenSam_eksklusionsliste.xlsx"
+# output_excel_file = "../data/Eksklusionslister/PenSam_eksklusionsliste.xlsx"
 scrape_pensam_pdf(pdf_file, output_excel_file)
 
 
