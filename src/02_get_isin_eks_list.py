@@ -63,7 +63,7 @@ df_kilde = df[df["ISIN kode"].notna()]
 # file_save = "../data/Eksklusionslister/Akademiker Pension_eksklusionsliste_isin.xlsx"
 # df_akademikerpension_isin.to_excel(file_save, index=False)
 
-# # AP Pension
+# AP Pension
 # appension_path = "../data/Eksklusionslister/AP Pension_eksklusionsliste.xlsx"
 # df_appension = pd.read_excel(appension_path)
 
@@ -200,10 +200,18 @@ df_kilde = df[df["ISIN kode"].notna()]
 # file_save = "../data/Eksklusionslister/Industriens Pension_eksklusionsliste_isin.xlsx"
 # df_Industriens Pension_isin.to_excel(file_save, index=False)
 
-# BankInvest
+# # BankInvest
 # BankInvest_path = "../data/Eksklusionslister/BankInvest_eksklusionsliste.xlsx"
 # df_BankInvest = pd.read_excel(BankInvest_path)
 
 # df_BankInvest_isin = add_isin_eksklusionsliste(df_kilde, df_BankInvest)
 # file_save = "../data/Eksklusionslister/BankInvest_eksklusionsliste_isin.xlsx"
 # df_BankInvest_isin.to_excel(file_save, index=False)
+
+# # BankInvest
+# DanskeBank_path = "../data/Eksklusionslister/Danske Bank_eksklusionsliste.xlsx"
+# df_DanskeBank = pd.read_excel(DanskeBank_path)
+
+# df_DanskeBank_isin = add_isin_eksklusionsliste(df_kilde, df_DanskeBank)
+# file_save = "../data/Eksklusionslister/Danske Bank_eksklusionsliste_isin.xlsx"
+# df_DanskeBank_isin.to_excel(file_save, index=False)
