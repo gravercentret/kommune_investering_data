@@ -4,7 +4,7 @@ data_path = "..\data\merged_data_exc_list_and_org.xlsx"
 merged_df = pd.read_excel(data_path)
 
 # Burde være unødvendig nu, da fejlen er renset i grunddata.
-merged_df["Kommune"] = merged_df["Kommune"].str.replace("\xa0", " ", regex=False)
+# merged_df["Kommune"] = merged_df["Kommune"].str.replace("\xa0", " ", regex=False)
 
 
 # List of relevant organizations
@@ -13,6 +13,7 @@ relevant_organizations = [
     "AP Pension",
     "ATP",
     "BankInvest",
+    "Danske Bank",
     "FN",
     "Industriens Pension",
     "Jyske Bank",
@@ -21,16 +22,16 @@ relevant_organizations = [
     "Lærernes Pension",
     "Nordea",
     "Nykredit",
+    "PBU",
     "PenSam",
     "PensionDanmark",
     "PFA",
     "PKA",
-    "Sydinvest",
-    "PBU",
     "Sampension",
     "Spar Nord",
-    "Sydinvenst",
+    "Sydinvest",
     "Velliv",
+    "Gravercentret",
 ]
 
 

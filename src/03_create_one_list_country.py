@@ -94,46 +94,45 @@ collapsed_df = (
 
 collapsed_df.to_excel("../data/unique_lande_all_isin.xlsx", index=False)
 
-#%%
 # Step 8: Flatten lists, deduplicate values, and return as a semicolon-separated string
-# def flatten_and_unique(val):
-#     all_values = []
+def flatten_and_unique(val):
+    all_values = []
 
-#     try:
-#         # If the value is a string containing semicolon-separated lists
-#         if isinstance(val, str):
-#             # Split by semicolon if the string contains multiple list representations
-#             parts = val.split(";")
-#             for part in parts:
-#                 part = part.strip()
-#                 # Try to convert each part to a list if it's a string representation of a list
-#                 if part.startswith("[") and part.endswith("]"):
-#                     list_part = ast.literal_eval(part)
-#                     all_values.extend(list_part)  # Flatten the list into the overall collection
-#                 else:
-#                     all_values.append(part)  # Append non-list items directly
-#         elif isinstance(val, list):
-#             all_values.extend(val)  # If it's already a list, just extend it to the collection
-#         else:
-#             all_values.append(val)  # If it's a single value, add it directly
+    try:
+        # If the value is a string containing semicolon-separated lists
+        if isinstance(val, str):
+            # Split by semicolon if the string contains multiple list representations
+            parts = val.split(";")
+            for part in parts:
+                part = part.strip()
+                # Try to convert each part to a list if it's a string representation of a list
+                if part.startswith("[") and part.endswith("]"):
+                    list_part = ast.literal_eval(part)
+                    all_values.extend(list_part)  # Flatten the list into the overall collection
+                else:
+                    all_values.append(part)  # Append non-list items directly
+        elif isinstance(val, list):
+            all_values.extend(val)  # If it's already a list, just extend it to the collection
+        else:
+            all_values.append(val)  # If it's a single value, add it directly
 
-#         # Deduplicate and sort the values
-#         unique_vals = sorted(set([str(item).strip() for item in all_values if item]))
-#         return "; ".join(unique_vals)  # Return the values as a semicolon-separated string
+        # Deduplicate and sort the values
+        unique_vals = sorted(set([str(item).strip() for item in all_values if item]))
+        return "; ".join(unique_vals)  # Return the values as a semicolon-separated string
 
-#     except (ValueError, SyntaxError):
-#         return val  # In case of an error, return the value as-is
+    except (ValueError, SyntaxError):
+        return val  # In case of an error, return the value as-is
 
 
-# # Apply the function to the columns that might contain lists stored as strings
-# collapsed_df["Kommuner"] = collapsed_df["Kommuner"].apply(flatten_and_unique)
-# collapsed_df["Matched Udsteder"] = collapsed_df["Matched Udsteder"].apply(flatten_and_unique)
-# collapsed_df["Matched Værdipapirets navn"] = collapsed_df["Matched Værdipapirets navn"].apply(
-#     flatten_and_unique
-# )
+# Apply the function to the columns that might contain lists stored as strings
+collapsed_df["Kommuner"] = collapsed_df["Kommuner"].apply(flatten_and_unique)
+collapsed_df["Matched Udsteder"] = collapsed_df["Matched Udsteder"].apply(flatten_and_unique)
+collapsed_df["Matched Værdipapirets navn"] = collapsed_df["Matched Værdipapirets navn"].apply(
+    flatten_and_unique
+)
 
-# # Save the collapsed dataframe to a new Excel file
-# collapsed_df.to_excel("../data/all_exclude_country_lists_isin.xlsx", index=False)
+# Save the collapsed dataframe to a new Excel file
+collapsed_df.to_excel("../data/all_exclude_country_lists_isin.xlsx", index=False)
 
-# # Print the resulting DataFrame
-# print(collapsed_df)
+# Print the resulting DataFrame
+print(collapsed_df)

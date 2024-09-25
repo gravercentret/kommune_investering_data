@@ -14,8 +14,10 @@ def get_data():
         [Udsteder], [Markedsværdi (DKK)], [Type], 
         [Problematisk ifølge:], 
         [Årsag til eksklusion],
-            CASE 
-            WHEN [Problematisk ifølge:] IS NOT NULL THEN '🔴'
+        CASE 
+            WHEN [OBS_Type] = 'red' THEN '🔴'
+            WHEN [OBS_Type] = 'orange' THEN '🟠'
+            WHEN [OBS_Type] = 'yellow' THEN '🟡'
             ELSE ''
         END AS OBS
         FROM kommunale_regioner_investeringer;

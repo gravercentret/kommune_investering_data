@@ -175,7 +175,7 @@ df_kilde = df[df["ISIN kode"].notna()]
 # file_save = "../data/Eksklusionslister/Lægernes Pension_eksklusionsliste_isin.xlsx"
 # df_Lægernes Pension_isin.to_excel(file_save, index=False)
 
-# PBU
+# # PBU
 # PBU_path = "../data/Eksklusionslister/PBU_eksklusionsliste.xlsx"
 # df_PBU = pd.read_excel(PBU_path)
 

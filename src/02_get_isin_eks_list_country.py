@@ -6,7 +6,7 @@ import re
 country_mapping = {
     'Afghanistan': 'Afghanistan',
     'Algeriet': 'Algeria',
-    'Amerikansk': 'American',
+    'Amerikansk Samoa': 'American Samoa',
     'Angola': 'Angola',
     'Anguilla': 'Anguilla',
     'Antigua og Barbuda': 'Antigua and Barbuda',
@@ -85,7 +85,7 @@ country_mapping = {
     'Tajikistan': 'Tajikistan',
     'Tchad': 'Chad',
     'Togo': 'Togo',
-    'Trinidad og Tobago': 'Trinidad And Tobago',
+    'Trinidad og Tobago': 'Trinidad and Tobago',
     'Tunesien': 'Tunisia',
     'Turkmenistan': 'Turkmenistan',
     'Tyrkiet': 'Turkey',
@@ -93,7 +93,7 @@ country_mapping = {
     'Vanuatu': 'Vanuatu',
     'Venezuela': 'Venezuela',
     'Venezuela, RB': 'Venezuela',
-    'Vestbredden og Gazastriben': 'West Bank And Gaza Strip',
+    'Vestbredden og Gazastriben': 'West Bank and Gaza Strip',
     'Vietnam': 'Vietnam',
     'Yemen': 'Yemen',
     'Yemen, Rep.': 'Yemen',
@@ -115,31 +115,36 @@ def map_country_to_english(country, country_mapping):
     return None  # If not a string or no match, return None
 
 
-# Function to normalize the names by converting to lowercase and removing special characters
+# Function to normalize the names by converting to lowercase but keeping the first letter intact
 def normalize_name(name):
     if pd.isna(name):
         return ""
-    # Lowercase and remove special characters
-    return re.sub(r"\W+", "", name.lower())
+    # Keep the first letter of each word intact, lowercase the rest, and remove special characters
+    return ' '.join([word.capitalize() for word in re.sub(r"\W+", " ", name).split()])
 
 # Update the function to match multiple ISINs, papers, and udsteder with normalization
 def match_country_isin(df1, df2, country_mapping):
     # Apply the country mapping to create a new column with cleaned English country names
     df2['Land oversat'] = df2['Land'].apply(lambda x: map_country_to_english(x, country_mapping))
     df1 = df1[df1['Type'] == 'Obligation']
-    
+
     # Apply normalization to relevant columns in df1
     df1["Udsteder_normalized"] = df1["Udsteder"].apply(normalize_name)
     df1["Værdipapirets navn_normalized"] = df1["Værdipapirets navn"].apply(normalize_name)
 
     # Function to find all matching papers, ISINs, and Udsteder
     def find_matches(country, df1):
-        # Ensure 'country' is a valid string before proceeding with str.contains
         if pd.notna(country):
-            country_normalized = normalize_name(country)  # Normalize the country name
+            # Normalize the country name, preserving capitalization of the first letter
+            country_normalized = normalize_name(country)
+
+            # Build the regular expression to match whole words with first-letter capitalization
+            country_regex = r'\b' + re.escape(country_normalized) + r'\b'
+
+            # Use str.contains with the regex to ensure proper word-boundary matching
             matches = df1[
-                df1['Værdipapirets navn_normalized'].str.contains(country_normalized, case=False, na=False)
-                | df1['Udsteder_normalized'].str.contains(country_normalized, case=False, na=False)
+                df1['Værdipapirets navn_normalized'].str.contains(country_regex, case=True, regex=True, na=False)
+                | df1['Udsteder_normalized'].str.contains(country_regex, case=True, regex=True, na=False)
             ]
             # If matches found, return the unique values for ISIN, 'Værdipapirets navn', and 'Udsteder' as lists
             if not matches.empty:
