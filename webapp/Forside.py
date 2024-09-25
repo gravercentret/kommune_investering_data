@@ -71,9 +71,8 @@ filtered_df = filter_df_by_search(filtered_df, search_query)
 
 filtered_df = fix_column_types(filtered_df)
 
-
-# Sort first by 'is_problematic' (so that True comes first), then by 'Kommune' and 'ISIN kode' alphabetically
-filtered_df = filtered_df.sort(["Problematisk ifølge:", "Kommune", "ISIN kode"], nulls_last=True)
+# Sort first by 'Priority' (so that True comes first), then by 'Kommune' and 'ISIN kode' alphabetically
+filtered_df = filtered_df.sort(["Priority", "Kommune", "ISIN kode"], nulls_last=True, descending=[True, False, False])
 
 # Conditionally display the header based on whether a search query is provided
 if search_query:
@@ -149,30 +148,38 @@ with col2:
                 st.markdown("***Antal investeringer udpeget som problematiske:***")
 
                 # Count the rows where 'Problematisk ifølge:' is not empty
-                problematic_count = filtered_df.filter(
-                    filtered_df["Problematisk ifølge:"].is_not_null()
+                problematic_count_red = filtered_df.filter(
+                    filtered_df["Priority"] == 3 # Red
                 ).shape[0]
 
                 # Display the number in red
                 st.markdown(
-                    f'<h1 style="color:red;">{problematic_count}</h1>', unsafe_allow_html=True
+                    f'<h1 style="color:red;">{problematic_count_red}</h1>', unsafe_allow_html=True
                 )
         with col2_2:
             with st.container(border=True):
                 st.markdown("***Antal investeringer fra ekskluderede lande:***")
 
+                problematic_count_orange = filtered_df.filter(
+                    filtered_df["Priority"] == 2 # Orange
+                ).shape[0]
+
                 # Display the second number in yellow
                 st.markdown(
-                    f'<h1 style="color:orange;">{problematic_count + 4}</h1>',
+                    f'<h1 style="color:orange;">{problematic_count_orange}</h1>',
                     unsafe_allow_html=True,
                 )
         with col2_3:
             with st.container(border=True):
                 st.markdown("***Antal investeringer værd at undersøge nærmere:***")
 
+                problematic_count_yellow = filtered_df.filter(
+                    filtered_df["Priority"] == 1 # Orange
+                ).shape[0]
+
                 # Display the second number in yellow
                 st.markdown(
-                    f'<h1 style="color:yellow;">{problematic_count + 100}</h1>',
+                    f'<h1 style="color:yellow;">{problematic_count_yellow}</h1>',
                     unsafe_allow_html=True,
                 )
     # Nøgletal

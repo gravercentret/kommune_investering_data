@@ -14,6 +14,7 @@ def get_data():
         [Udsteder], [Markedsværdi (DKK)], [Type], 
         [Problematisk ifølge:], 
         [Årsag til eksklusion],
+        [Priority],
         CASE 
             WHEN [OBS_Type] = 'red' THEN '🔴'
             WHEN [OBS_Type] = 'orange' THEN '🟠'

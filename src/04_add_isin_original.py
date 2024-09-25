@@ -65,7 +65,6 @@ df_deduplicated = duplicate_isin.loc[duplicate_isin.groupby('ISIN')['Priority'].
 # If you want to update your original dataframe by removing duplicates and keeping the highest priority:
 df_cleaned = df_all_lists.drop_duplicates(subset='ISIN', keep=False)  # Remove all duplicates first
 df_final_isin_lists = pd.concat([df_cleaned, df_deduplicated], ignore_index=True)
-df_final_isin_lists.drop("Priority", axis=1, inplace=True)
 
 ### Merge with our original data
 # Perform a left merge on the 'ISIN kode' from df_kilde and 'ISIN' from df_isin

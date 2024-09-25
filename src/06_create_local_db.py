@@ -17,8 +17,21 @@ print("DataFrame has been saved to SQLite database as 'data_table'.")
 # Connect to the SQLite database
 with engine.connect() as conn:
     # Sample query to select all rows
-    query = "SELECT * FROM kommunale_regioner_investeringer WHERE `Kommune` = 'Bornholm';"  # Example query
-
+    query = "SELECT * FROM kommunale_regioner_investeringer WHERE `Kommune` = 'Albertslund';"  # Example query
+    # query = """
+    #         SELECT [Kommune], [ISIN kode], [Værdipapirets navn], 
+    #     [Udsteder], [Markedsværdi (DKK)], [Type], 
+    #     [Problematisk ifølge:], 
+    #     [Årsag til eksklusion],
+    #     [Priority],
+    #     CASE 
+    #         WHEN [OBS_Type] = 'red' THEN '🔴'
+    #         WHEN [OBS_Type] = 'orange' THEN '🟠'
+    #         WHEN [OBS_Type] = 'yellow' THEN '🟡'
+    #         ELSE ''
+    #     END AS OBS
+    #     FROM kommunale_regioner_investeringer;
+    #     """
     # Execute the query and load the result into a new DataFrame
     result_df = pd.read_sql(query, conn)
 
