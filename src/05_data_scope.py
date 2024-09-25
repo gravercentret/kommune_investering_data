@@ -1,6 +1,6 @@
 import pandas as pd
 
-data_path = "..\data\merged_data_exc_list_and_org.xlsx"
+data_path = "../data/merged_data_exc_list_and_org.xlsx"
 merged_df = pd.read_excel(data_path)
 
 # Burde være unødvendig nu, da fejlen er renset i grunddata.

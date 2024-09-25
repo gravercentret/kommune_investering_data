@@ -19,12 +19,12 @@ with engine.connect() as conn:
     # Sample query to select all rows
     query = "SELECT * FROM kommunale_regioner_investeringer WHERE `Kommune` = 'Albertslund';"  # Example query
     # query = """
-    #         SELECT [Kommune], [ISIN kode], [Værdipapirets navn], 
-    #     [Udsteder], [Markedsværdi (DKK)], [Type], 
-    #     [Problematisk ifølge:], 
+    #         SELECT [Kommune], [ISIN kode], [Værdipapirets navn],
+    #     [Udsteder], [Markedsværdi (DKK)], [Type],
+    #     [Problematisk ifølge:],
     #     [Årsag til eksklusion],
     #     [Priority],
-    #     CASE 
+    #     CASE
     #         WHEN [OBS_Type] = 'red' THEN '🔴'
     #         WHEN [OBS_Type] = 'orange' THEN '🟠'
     #         WHEN [OBS_Type] = 'yellow' THEN '🟡'

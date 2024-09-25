@@ -106,7 +106,7 @@ def generate_organization_links(df, column_name):
         "Sampension": "https://www.sampension.dk/om-sampension/finansiel-information/ansvarlige-investeringer/aabenhed-og-dokumentation---data-om-sampensions-esg-indsats/Ekskluderede-selskaber",
         "Spar Nord": "https://media.sparnord.dk/dk/omsparnord/csr/eksklusionsliste.pdf",
         "Sydinvenst": "https://www.sydinvest.dk/investeringsforening/ansvarlighed/eksklusionsliste-selskaber",
-        "Velliv": "https://www.velliv.dk/dk/privat/om-os/samfundsansvar/ansvarlige-investeringer/vores-holdninger",# "https://www.velliv.dk/media/5102/eksklusionslisten-31012024.pdf",
+        "Velliv": "https://www.velliv.dk/dk/privat/om-os/samfundsansvar/ansvarlige-investeringer/vores-holdninger",  # "https://www.velliv.dk/media/5102/eksklusionslisten-31012024.pdf",
     }
     # Extract all unique organizations from the dataframe column
     unique_orgs = set()

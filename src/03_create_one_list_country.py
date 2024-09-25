@@ -65,7 +65,8 @@ final_df = pd.concat(dataframes, ignore_index=True)
 # Save the final dataframe to a new Excel file if needed
 final_df.to_excel("../data/filtered_lande_isin_data_with_prefix.xlsx", index=False)
 
-final_df['Land'] = final_df['Land'].str.strip()
+final_df["Land"] = final_df["Land"].str.strip()
+
 
 # Step 7: Collapse rows with the same ISIN
 # Function to merge differing values into a semicolon-separated string
@@ -76,13 +77,15 @@ def merge_values(series):
     else:
         return "; ".join(map(str, unique_vals))  # If multiple values, join them with a semicolon
 
+
 ### Ændret fra ISIN til Land
 # Perform the aggregation by Land
 collapsed_df = (
-    final_df.groupby("Land oversat")
+    final_df.groupby("ISIN")
     .agg(
-        {   "Land": merge_values,
-            "ISIN": merge_values,
+        {
+            "Land": merge_values,
+            "Land oversat": merge_values,
             "Årsag til eksklusion": merge_values,
             "Matched Udsteder": merge_values,
             "Matched Værdipapirets navn": merge_values,
@@ -92,7 +95,8 @@ collapsed_df = (
     .reset_index()
 )
 
-collapsed_df.to_excel("../data/unique_lande_all_isin.xlsx", index=False)
+# collapsed_df.to_excel("../data/unique_lande_all_isin.xlsx", index=False)
+
 
 # Step 8: Flatten lists, deduplicate values, and return as a semicolon-separated string
 def flatten_and_unique(val):

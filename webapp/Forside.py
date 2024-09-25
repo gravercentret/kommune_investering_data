@@ -3,6 +3,7 @@ import pandas as pd
 import polars as pl
 import numpy as np
 import re
+import babel.numbers
 from io import BytesIO
 import matplotlib.pyplot as plt
 from utils.data_prep import (
@@ -14,6 +15,7 @@ from utils.data_prep import (
     fix_column_types,
 )
 from utils.styling import color_rows_limited
+from utils.plots import create_pie_chart
 from src.config import set_pandas_options, set_streamlit_options
 
 # Apply the settings
@@ -26,6 +28,9 @@ set_streamlit_options()
 # st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # load_css("webapp/style.css")
+# Define a function to format numbers with European conventions
+def format_number_european(value):
+    return babel.numbers.format_decimal(value, locale='da_DK')
 
 if "df_pl" not in st.session_state:
     st.session_state.df_pl = get_data()
@@ -88,55 +93,7 @@ col1, col2 = st.columns([0.4, 0.6])
 with col1:
     st.subheader("Fordeling af typer (Markedsværdi)")
 
-    # Group the data by 'Type' and sum the 'Markedsværdi (DKK)'
-    type_distribution = (
-        filtered_df.group_by("Type")
-        .agg(pl.col("Markedsværdi (DKK)").sum().alias("Total Markedsværdi"))
-        .to_pandas()
-    )  # Convert to pandas for plotting
-
-    # Drop rows with missing values (NaN) in 'Total Markedsværdi' or 'Type'
-    type_distribution = type_distribution.dropna(subset=["Total Markedsværdi", "Type"])
-
-    # Combine 'Andet' and 'Ikke angivet' into one category
-    type_distribution["Type"] = type_distribution["Type"].replace(
-        {"Andet": "Andet/Ikke angivet", "Ikke angivet": "Andet/Ikke angivet"}
-    )
-
-    # Re-aggregate the data to group by the combined category, summing only the numeric column
-    type_distribution = type_distribution.groupby("Type", as_index=False)[
-        "Total Markedsværdi"
-    ].sum()
-
-    # Define a color mapping for consistent colors
-    color_mapping = {
-        "Aktie": "cornflowerblue",
-        "Obligation": "lightgreen",
-        "Virksomhedsobligation": "lightblue",
-        "Andet/Ikke angivet": "lightgray",
-    }
-
-    # Match the colors with the values in 'Type'
-    colors = [color_mapping.get(type_val, "gray") for type_val in type_distribution["Type"]]
-
-    # Plot the pie chart using matplotlib
-    fig, ax = plt.subplots()
-    ax.pie(
-        type_distribution["Total Markedsværdi"],
-        colors=colors,
-        startangle=0,
-        autopct="%1.1f%%",
-        textprops={"fontsize": 14},
-    )
-
-    # Add a legend with the 'Type' values
-    ax.legend(
-        type_distribution["Type"], title="Type", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1)
-    )
-
-    # Display the pie chart in Streamlit
-    st.pyplot(fig)
-
+    create_pie_chart(filtered_df)
 
 # Column 2: Number of problematic investments
 with col2:
@@ -158,12 +115,11 @@ with col2:
                 )
         with col2_2:
             with st.container(border=True):
-                st.markdown("***Antal investeringer fra ekskluderede lande:***")
-
+                st.markdown("***Antal investeringer fra ekskluderede lande: (Statsobligationer)***")
                 problematic_count_orange = filtered_df.filter(
                     filtered_df["Priority"] == 2 # Orange
                 ).shape[0]
-
+                
                 # Display the second number in yellow
                 st.markdown(
                     f'<h1 style="color:orange;">{problematic_count_orange}</h1>',
@@ -193,18 +149,20 @@ with col2:
         # Calculate the total sum of 'Markedsværdi (DKK)' and display it in both DKK and millions
         total_markedsvaerdi = (
             filtered_df.select(pl.sum("Markedsværdi (DKK)")).to_pandas().iloc[0, 0]
-        )
-        markedsvaerdi_million = total_markedsvaerdi / 1_000_000
+        ).astype(int)
+        markedsvaerdi_million = round(total_markedsvaerdi / 1000000,1)
+        markedsvaerdi_million = format_number_european(markedsvaerdi_million)
         st.write(
-            f"**Total Markedsværdi (DKK):** {total_markedsvaerdi:,.2f} ({markedsvaerdi_million:,.1f} millioner)"
+            f"**Total Markedsværdi (DKK):** {markedsvaerdi_million} millioner" # {total_markedsvaerdi:,.2f}
         )
 
         # Filter for problematic investments and calculate the total sum of their 'Markedsværdi (DKK)'
         prob_df = filtered_df.filter(filtered_df["Problematisk ifølge:"].is_not_null())
-        prob_markedsvaerdi = prob_df.select(pl.sum("Markedsværdi (DKK)")).to_pandas().iloc[0, 0]
-        prob_markedsvaerdi_million = prob_markedsvaerdi / 1_000_000
+        prob_markedsvaerdi = (prob_df.select(pl.sum("Markedsværdi (DKK)")).to_pandas().iloc[0, 0]).astype(int)
+        prob_markedsvaerdi_million = round(prob_markedsvaerdi / 1_000_000,1)
+        prob_markedsvaerdi_million = format_number_european(prob_markedsvaerdi_million)
         st.write(
-            f"**Markedsværdi af problematiske investeringer:** {prob_markedsvaerdi:,.2f} ({prob_markedsvaerdi_million:,.1f} millioner)"
+            f"**Markedsværdi af problematiske investeringer:** {prob_markedsvaerdi_million} millioner" # {prob_markedsvaerdi:,.2f} 
         )
 
 

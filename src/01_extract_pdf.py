@@ -1353,42 +1353,54 @@ df = pd.DataFrame(
 # %% Danske Bank
 import pandas as pd
 
+
 # Define the function to read all sheets and combine them into one dataframe
 def combine_sheets_to_one(file_path):
     # Load the Excel file
     xls = pd.ExcelFile(file_path)
-    
+
     # Define the column names to use for all sheets
     column_names = [
-        'Incident & Event-based Screening Company', 'Disputed weaponry or arms trade', 
-        'Biodiversity impacts', 'Cannabis', 'Harmful environmental practices', 'Corruption',
-        'Labour practices', 'Health & Safety issues', 'Human rights issues', 
-        'Affiliated with Russia', 'Product safety', 'Tax practices', 'Governance & controls'
+        "Incident & Event-based Screening Company",
+        "Disputed weaponry or arms trade",
+        "Biodiversity impacts",
+        "Cannabis",
+        "Harmful environmental practices",
+        "Corruption",
+        "Labour practices",
+        "Health & Safety issues",
+        "Human rights issues",
+        "Affiliated with Russia",
+        "Product safety",
+        "Tax practices",
+        "Governance & controls",
     ]
-    
+
     # Initialize an empty list to store each sheet's dataframe
     combined_df_list = []
-    
+
     # Iterate through all sheets except for the first one (which is the first page)
     for sheet_name in xls.sheet_names:
-        if sheet_name != 'First Page':
+        if sheet_name != "First Page":
             df = pd.read_excel(file_path, sheet_name=sheet_name)
             df.columns = column_names  # Rename columns to standard names
             combined_df_list.append(df)
-    
+
     # Combine all dataframes into one
     combined_df = pd.concat(combined_df_list, ignore_index=True)
-    
+
     # Remove rows that are identical to the column names
     combined_df = combined_df[combined_df.ne(column_names).any(axis=1)]
 
     return combined_df
 
+
 # Example usage
-file_path = '../data/Danske_Bank_split_tables.xlsx'
+file_path = "../data/Danske_Bank_split_tables.xlsx"
 combined_df = combine_sheets_to_one(file_path)
 
 df_with_x = combined_df
+
 
 # Define the function to create a new column 'Årsag til eksklusion' based on the "X" in specific columns
 def create_exclusion_reason(row):
@@ -1417,21 +1429,22 @@ def create_exclusion_reason(row):
         reasons.append("Tax practices")
     if row["Governance & controls"] == "X":
         reasons.append("Governance & controls")
-    
+
     # Join all reasons with a semicolon and return
     return "; ".join(reasons)
+
 
 # Apply the function to create the 'Årsag til eksklusion' column
 df_with_x["Årsag til eksklusion"] = df_with_x.apply(create_exclusion_reason, axis=1)
 
 # Filter the dataframe to show the relevant columns
 df = df_with_x[["Incident & Event-based Screening Company", "Årsag til eksklusion"]]
-df.rename(columns={'Incident & Event-based Screening Company': 'Selskab'}, inplace=True) 
+df.rename(columns={"Incident & Event-based Screening Company": "Selskab"}, inplace=True)
 # Display the resulting dataframe
 print(df.head())
 
 # Save the DataFrame to an Excel file
-output_file_path = '../data/Eksklusionslister/Danske Bank_eksklusionsliste.xlsx'
+output_file_path = "../data/Eksklusionslister/Danske Bank_eksklusionsliste.xlsx"
 df.to_excel(output_file_path, index=False)
 
 
@@ -1449,32 +1462,44 @@ extracted_data = []
 # Iterate through the rows to find "Criteria"
 for index, row in df.iterrows():
     # Strip special characters and check if the first column contains "Criteria"
-    if 'Criteria' in re.sub(r'\W+', '', str(row['Danske'])):
+    if "Criteria" in re.sub(r"\W+", "", str(row["Danske"])):
         # The exclusion reason is in the next row (index + 1)
-        exclusion_reason = df.iloc[index + 1]['Danske']
-        
+        exclusion_reason = df.iloc[index + 1]["Danske"]
+
         # Now gather company names from the subsequent rows until the exclusion reason changes
         next_row_index = index + 1
         while next_row_index < len(df):
             next_row = df.iloc[next_row_index]
-            if next_row['Danske'] != exclusion_reason:
+            if next_row["Danske"] != exclusion_reason:
                 break  # Stop when the exclusion reason is different
 
             # Collect company names from the next three columns if they exist
-            companies = [next_row[col] for col in ['Unnamed: 1', 'Unnamed: 2', 'Unnamed: 3'] if pd.notna(next_row[col])]
-            
+            companies = [
+                next_row[col]
+                for col in ["Unnamed: 1", "Unnamed: 2", "Unnamed: 3"]
+                if pd.notna(next_row[col])
+            ]
+
             # Append the exclusion reason and companies to the extracted data
             for company in companies:
                 extracted_data.append([company, exclusion_reason])
-            
+
             # Move to the next row
             next_row_index += 1
 
 
 # Define the exclusion categories to look for
 exclusion_categories = [
-    'Tar Sands', 'Thermal Coal', 'Fossil Fuel', 'Controversial Weapons', 'Tobacco',
-    'Alcohol', 'Gambling', 'Pornography', 'Military Equipment', 'Principal Adverse Impacts (PAI)'
+    "Tar Sands",
+    "Thermal Coal",
+    "Fossil Fuel",
+    "Controversial Weapons",
+    "Tobacco",
+    "Alcohol",
+    "Gambling",
+    "Pornography",
+    "Military Equipment",
+    "Principal Adverse Impacts (PAI)",
 ]
 
 
@@ -1482,12 +1507,12 @@ exclusion_categories = [
 for index, row in df.iterrows():
     # Check if the row contains any of the exclusion categories
     for category in exclusion_categories:
-        if category in str(row['Danske']):
+        if category in str(row["Danske"]):
             # Check if "Company" is in the same string or the next row
-            if 'Company' in str(row['Danske']):
+            if "Company" in str(row["Danske"]):
                 exclusion_reason = category
                 start_index = index + 1  # Start collecting companies from the next row
-            elif 'Company' in str(df.iloc[index + 1]['Danske']):
+            elif "Company" in str(df.iloc[index + 1]["Danske"]):
                 exclusion_reason = category
                 start_index = index + 2  # Skip the next row and start collecting companies
             else:
@@ -1496,18 +1521,18 @@ for index, row in df.iterrows():
             # Collect company names from the 'Danske' column until a blank line or "Total excluded companies"
             for i in range(start_index, len(df)):
                 company_row = df.iloc[i]
-                company_name = company_row['Danske']
-                
-                if pd.isna(company_name) or 'Total excluded companies' in str(company_name):
+                company_name = company_row["Danske"]
+
+                if pd.isna(company_name) or "Total excluded companies" in str(company_name):
                     break  # Stop if a blank line or "Total excluded companies" is found
 
                 extracted_data.append([company_name, exclusion_reason])
 
 # Convert the extracted data into a DataFrame
-df_extracted = pd.DataFrame(extracted_data, columns=['Selskab', 'Årsag til eksklusion'])
+df_extracted = pd.DataFrame(extracted_data, columns=["Selskab", "Årsag til eksklusion"])
 print(df_extracted)
 
-file_path = '../data/Eksklusionslister/Danske Bank_eksklusionsliste.xlsx'
+file_path = "../data/Eksklusionslister/Danske Bank_eksklusionsliste.xlsx"
 df_1 = pd.read_excel(file_path)
 
 df_final = pd.concat([df_1, df_extracted], ignore_index=True)
