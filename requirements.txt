@@ -8,3 +8,6 @@ matplotlib
 xlsxwriter
 openpyxl
 black
+cryptography
+python-dotenv
+plotly

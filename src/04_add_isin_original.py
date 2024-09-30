@@ -39,6 +39,7 @@ df_both_isin.drop("Land oversat", axis=1, inplace=True)
 yellow_path = "../data/Gule selskaber.xlsx"
 df_yellow = pd.read_excel(yellow_path)
 df_yellow["OBS_Type"] = "yellow"
+df_yellow["ISIN kode"] = df_yellow["ISIN kode"].str.strip()
 df_yellow.rename(
     columns={
         "ISIN kode": "ISIN",
@@ -49,6 +50,7 @@ df_yellow.rename(
     inplace=True,
 )
 df_yellow.drop("Type", axis=1, inplace=True)
+df_yellow['Eksklusionsårsager'] = df_yellow["Årsag til eksklusion"]
 df_yellow["Årsag til eksklusion"] = "Gravercentret: " + df_yellow["Årsag til eksklusion"].astype(
     str
 )
@@ -65,11 +67,54 @@ df_all_lists["Priority"] = df_all_lists["OBS_Type"].map(priority_map)
 # Find duplicate ISINs
 duplicate_isin = df_all_lists[df_all_lists.duplicated(subset="ISIN", keep=False)]
 
-# Group duplicates by 'ISIN' and keep the row with the highest priority
-df_deduplicated = duplicate_isin.loc[duplicate_isin.groupby("ISIN")["Priority"].idxmax()]
+# Filter out the duplicates that have 'yellow' in OBS_Type (remove all 'yellow' duplicates)
+# duplicate_isin = duplicate_isin[duplicate_isin["OBS_Type"] != "yellow"]
+
+# duplicate_isin = duplicate_isin[duplicate_isin.duplicated(subset="ISIN", keep=False)]
+
+
+def merge_reason(group):
+    # Sort the group by priority (red first, then orange)
+    group = group.sort_values(by="Priority", ascending=False)
+
+    # Remove the yellow
+    group = group[group["OBS_Type"] != "yellow"]
+    # Concatenate 'Årsag til eksklusion' from the rows, using ';' as separator
+    try:
+        merged_reason = "; ".join(group["Årsag til eksklusion"])
+
+        # Split the merged reason by ';' and remove duplicates
+        unique_reasons = list(set(merged_reason.split("; ")))
+        # Sort the unique reasons to maintain order and join them back together
+        merged_cleaned_reason = "; ".join(unique_reasons)
+
+        # Assign the cleaned, merged reason to the highest-priority row (first one after sorting)
+        group["Årsag til eksklusion"] = merged_cleaned_reason
+
+        ## Ny kode - Eksklusionsårsager
+        merged_reason_2 = "; ".join(group["Eksklusionsårsager"])
+
+        # Split the merged reason by ';' and remove duplicates
+        unique_reasons_2 = list(set(merged_reason_2.split("; ")))
+        # Sort the unique reasons to maintain order and join them back together
+        merged_cleaned_reason_2 = "; ".join(unique_reasons_2)
+
+        # Assign the cleaned, merged reason to the highest-priority row (first one after sorting)
+        group["Eksklusionsårsager"] = merged_cleaned_reason_2
+    except:
+        pass
+    # Keep the row with the highest priority (red over orange)
+    return group.iloc[0].copy()  # Return a copy to avoid view-related issues
+
+
+# Apply the merge function to the duplicate ISINs
+df_deduplicated = duplicate_isin.groupby("ISIN").apply(merge_reason)
+
+# Optionally, reset the index if needed
+df_deduplicated = df_deduplicated.reset_index(drop=True)
 
 # If you want to update your original dataframe by removing duplicates and keeping the highest priority:
-df_cleaned = df_all_lists.drop_duplicates(subset="ISIN", keep=False)  # Remove all duplicates first
+df_cleaned = df_all_lists.drop_duplicates(subset="ISIN", keep=False)
 df_final_isin_lists = pd.concat([df_cleaned, df_deduplicated], ignore_index=True)
 
 ### Merge with our original data

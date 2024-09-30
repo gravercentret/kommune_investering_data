@@ -1,12 +1,60 @@
-/* style.css */
-
-/* Change the background color to a mild grey */
-body {
-    background-color: #dadada;
+/* styles.css */
+body, h1, h2, h3, h4, h5, h6, input, button {
+    font-family: 'Raleway', sans-serif;
+    color: rgb(0, 0, 0);
+} 
+ 
+/* Reduce the top margin and padding */
+.block-container {
+    padding-top: 3rem; /* Adjust this value as needed */
+    padding-left: 4rem; /* Adjust the left padding if needed */
+    padding-right: 4rem; /* Adjust the right padding if needed */
 }
 
-/* Optional: Customize the font and text color for better readability */
-h1, h2, h3, h4, h5, h6, p {
-    color: #ffffff; /* Darker text color for better contrast */
-    font-family: Arial, sans-serif; /* You can choose your preferred font */
+/* Optionally adjust padding around the header if needed */
+header {
+    padding-top: 0rem;
+    padding-bottom: 1rem;
+}
+
+/* Change background color of the header */
+[data-testid="stHeader"] {
+    background-color: #ffffff; /* Your desired color */
+}
+
+/* Change background color of the main app content */
+[data-testid="stAppViewContainer"] {
+    background-color: #ffffff; /* Your desired color */
+}
+
+[data-testid="stSidebar"] .stLogo {
+    width: auto;
+    height: auto; 
+}
+
+/* Custom sidebar styling */
+[data-testid=stSidebar] {  
+    background-color: rgb(212, 227, 240);
+    color: rgb(0, 0, 0);
+}
+ 
+/* Custom sidebar styling for all text elements, excluding select box */
+/* [data-testid=stSidebar] *:not(.stSelectbox div[data-baseweb="select"] *):not(.stTextInput input):not(.stNumberInput input):not(.stTextArea textarea):not(.stButton>button) {
+    color: white !important;
+}
+  */
+/* Ensure the dropdown menu background and text color match */
+[data-testid=stSidebar] .stSelectbox div[data-baseweb="select"] {
+    color: black !important;
+}
+ 
+/* Extra specificity for select box input text */
+[data-testid=stSidebar] .stSelectbox div[data-baseweb="select"] input {
+    color: black !important; /* Ensure chosen element text is black */
+    background-color: white !important; /* Ensure input background is white */
+}
+ 
+/* Extra specificity for select box selected item text */
+[data-testid=stSidebar] .stSelectbox div[data-baseweb="select"] span[data-select="true"] {
+    color: black !important; /* Ensure chosen element text is black */
 }

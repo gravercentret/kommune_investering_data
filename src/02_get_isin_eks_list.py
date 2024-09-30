@@ -168,12 +168,12 @@ df_kilde = df[df["ISIN kode"].notna()]
 # df_Sampension_isin.to_excel(file_save, index=False)
 
 # Lægernes Pension
-# Lægernes Pension_path = "../data/Eksklusionslister/Lægernes Pension_eksklusionsliste.xlsx"
-# df_Lægernes Pension = pd.read_excel(Lægernes Pension_path)
+Lægernes_Pension_path = "../data/Eksklusionslister/Lægernes Pension_eksklusionsliste.xlsx"
+df_Lægernes_Pension = pd.read_excel(Lægernes_Pension_path)
 
-# df_Lægernes Pension_isin = add_isin_eksklusionsliste(df_kilde, df_Lægernes Pension)
-# file_save = "../data/Eksklusionslister/Lægernes Pension_eksklusionsliste_isin.xlsx"
-# df_Lægernes Pension_isin.to_excel(file_save, index=False)
+df_Lægernes_Pension_isin = add_isin_eksklusionsliste(df_kilde, df_Lægernes_Pension)
+file_save = "../data/Eksklusionslister/Lægernes Pension_eksklusionsliste_isin.xlsx"
+df_Lægernes_Pension_isin.to_excel(file_save, index=False)
 
 # # PBU
 # PBU_path = "../data/Eksklusionslister/PBU_eksklusionsliste.xlsx"
@@ -192,13 +192,13 @@ df_kilde = df[df["ISIN kode"].notna()]
 # file_save = "../data/Eksklusionslister/Spar Nord_eksklusionsliste_isin.xlsx"
 # df_Spar_Nord_isin.to_excel(file_save, index=False)
 
-# # Industriens Pension
-# Industriens Pension_path = "../data/Eksklusionslister/Industriens Pension_eksklusionsliste.xlsx"
-# df_Industriens Pension = pd.read_excel(Industriens Pension_path)
+# Industriens Pension
+Industriens_Pension_path = "../data/Eksklusionslister/Industriens Pension_eksklusionsliste.xlsx"
+df_Industriens_Pension = pd.read_excel(Industriens_Pension_path)
 
-# df_Industriens Pension_isin = add_isin_eksklusionsliste(df_kilde, df_Industriens Pension)
-# file_save = "../data/Eksklusionslister/Industriens Pension_eksklusionsliste_isin.xlsx"
-# df_Industriens Pension_isin.to_excel(file_save, index=False)
+df_Industriens_Pension_isin = add_isin_eksklusionsliste(df_kilde, df_Industriens_Pension)
+file_save = "../data/Eksklusionslister/Industriens Pension_eksklusionsliste_isin.xlsx"
+df_Industriens_Pension_isin.to_excel(file_save, index=False)
 
 # # BankInvest
 # BankInvest_path = "../data/Eksklusionslister/BankInvest_eksklusionsliste.xlsx"

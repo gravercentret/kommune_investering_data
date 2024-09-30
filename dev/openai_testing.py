@@ -10,9 +10,9 @@ def get_data():
     engine = create_engine("sqlite:///../src/investerings_database.db")
 
     query = """
-        SELECT [Kommune], [Udsteder], [Markedsværdi (DKK)], [Type], 
+        SELECT [Kommune], [Udsteder], [Værdipapirets navn], [Markedsværdi (DKK)], [Type], 
         [Problematisk ifølge:], 
-        [Årsag til eksklusion]
+        [Årsag til eksklusion], [Eksklusionsårsager]
         FROM kommunale_regioner_investeringer;
     """
 
@@ -66,6 +66,60 @@ def generate_text_from_dataframe(
 
     return completion.choices[0].message
 
+system_prompt = """Du er en assistent, der skal hjælpe en journalist. 
+    Du får en liste med forskellige temaer.
+    Lav et resumé af disse i punktform. 
+    Besvar udelukkende med punkter, ikke med en overskrift.
+    """
+
+# Your OpenAI API key (replace with your actual key)
+with open("api_key.txt") as f:
+    api_key = f.read()
+
+# Get data
+df_pl = get_data()
+df_pd = df_pl.to_pandas()
+kommune = "Tønder"
+df_test = df_pd[df_pd["Kommune"] == kommune]
+# antal_inv = len(df_test)
+# sum_inv = sum(df_test["Markedsværdi (DKK)"])
+# antal_inv_prop = len(df_test[df_test["Problematisk ifølge:"].notna()])
+# sum_inv_prop = sum(df_test[df_test["Problematisk ifølge:"].notna()]["Markedsværdi (DKK)"])
+
+def create_unique_reasons_list(df):
+    årsager = set(df_prop['Eksklusionsårsager'].tolist())
+
+    # Step 1: Flatten the list by splitting each string on the semicolon
+    flattened_topics = [topic.strip() for item in årsager for topic in item.split(';')]
+
+    # Step 2: Create a set to store unique topics
+    unique_topics = set(flattened_topics)
+
+    # Step 3: If necessary, you can sort or further process the unique topics
+    # Sort for presentation purposes
+    unique_topics = sorted(unique_topics)
+
+    return unique_topics
+
+df_prop = df_test[df_test["Problematisk ifølge:"].notna()]
+
+årsager = create_unique_reasons_list(df_prop)
+
+prompt_template = f"""Lav en gengivelse eksklusionsårsagerne. 
+Det skal være i punktform. Det handler om investeringer foretaget af {kommune}.
+Det hele skal stå på dansk. 
+Her er årsagerne:
+{årsager}
+Hvis der ikke er nogen årsag, så skriv, at der ikke er noget relevant data.
+"""
+
+# Generate text based on the dataframe
+result = generate_text_from_dataframe(df_prop, api_key, prompt_template, system_prompt)
+print(result.content)
+
+
+##### Tidligere forsøg
+
 
 # system_prompt = """Du er en assistent, der skal hjælpe en journalist.
 #     Lav en opsummering, der først skal beskrive det data,
@@ -79,31 +133,17 @@ def generate_text_from_dataframe(
 #     Lav det som et
 #     kort og præcist resumé i en sammenhængende tekst.""" # gerne i punktform.
 
-system_prompt = """Du er en assistent, der skal hjælpe en journalist. 
-    Lav en opsummering, der skal beskrive det problematiske i det data, 
-    som journalisten sender. Der vil handle om investeringer 
-    fra en dansk kommune eller region. I kolonnen 
-    'Problematisk ifølge:' fremgår hvilke organisationer, 
-    som har sat det angivne selskab på deres eksklusionsliste. 
-    Fortæl journalisten hvorfor investeringerne er problematiske. 
-    Lav det som et kort og præcist resumé i en sammenhængende tekst.
-    """  # gerne i punktform.
-
-# Your OpenAI API key (replace with your actual key)
-with open("api_key.txt") as f:
-    api_key = f.read()
-
-# Get data
-df_pl = get_data()
-df_pd = df_pl.to_pandas()
-kommune = "Tønder"
-df_test = df_pd[df_pd["Kommune"] == kommune]
-antal_inv = len(df_test)
-sum_inv = sum(df_test["Markedsværdi (DKK)"])
-antal_inv_prop = len(df_test[df_test["Problematisk ifølge:"].notna()])
-sum_inv_prop = sum(df_test[df_test["Problematisk ifølge:"].notna()]["Markedsværdi (DKK)"])
-
-df_prop = df_test[df_test["Problematisk ifølge:"].notna()]
+# system_prompt = """Du er en assistent, der skal hjælpe en journalist. 
+#     Lav en opsummering, der skal beskrive det problematiske i det data, 
+#     som journalisten sender. Der vil handle om investeringer 
+#     fra en dansk kommune eller region. I kolonnen 
+#     'Problematisk ifølge:' fremgår hvilke organisationer, 
+#     som har sat det angivne selskab på deres eksklusionsliste. 
+#     I kolonnen 'Årsag til eksklusion:' står der hvorfor. 
+#     Lav det som et kort og præcist resumé i punktform, 
+#     der får de vigtigste informationer med. 
+#     Beksriv kun data og kom ikke selv med nogle fortolkende input.
+#     """  # gerne i punktform.  
 
 # Optional prompt template, you can give instructions here
 # prompt_template = f"""Opsummer investeringerne foretaget af {kommune}. Her er ekstra information om data.
@@ -111,15 +151,6 @@ df_prop = df_test[df_test["Problematisk ifølge:"].notna()]
 #                         Der er {round(antal_inv_prop)} problematiske investeringer med en værdi af {sum_inv_prop}.
 #                         Skriv et kort resumé med fokus på, hvorfor de er problematiske.
 #                     """
-
-prompt_template = f"""Opsummer investeringerne foretaget af {kommune}. Fokuser på, hvem der har investeringerne på
-                        deres eksklusionsliste, og hvorfor de er der.
-                    """
-
-
-# Generate text based on the dataframe
-result = generate_text_from_dataframe(df_prop, api_key, prompt_template, system_prompt)
-print(result.content)
 
 # Bornholm = "**Opsummering af investeringer fra Bornholm:**\n\n- **Total antal investeringer:** 1.751\n- **Total værdi af investeringer:** 85.177.238 DKK\n- **Antal problematiske investeringer:** 21\n- **Samlet værdi af problematiske investeringer:** 577.834 DKK\n\n**Overordnede årsager til problematiske investeringer:**\n\n- Investeringerne er problematiske, da de er knyttet til selskaber, som har været involveret i aktiviteter, der strider imod menneskerettigheder eller forårsager omfattende miljøskader.\n- Flere organisationer, herunder *Lærerens Pension* og *FN*, har vurderet, at disse selskaber udviser normbrud ved at ignorere sociale og miljømæssige ansvar.\n\n**Eksempler på problematiske områder:**\n- Levering af tjenester, der understøtter opretholdelsen af bosættelser og transport.\n- Anvendelse af naturressourcer, især vand og land, for kommercielle formål.\n- Overtrædelser af arbejdstagerrettigheder i forbindelse med ILO-konventioner. \n\nBaseret på denne information kan der være grund til at overveje revurdering af investeringerne for at sikre overholdelse af etiske standarder og forvaltning af Bornholm's investeringer."
 
@@ -153,4 +184,4 @@ print(result.content)
 #     ]
 # )
 
-print(completion.choices[0].message)
+# print(completion.choices[0].message)

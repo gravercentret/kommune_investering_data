@@ -45,6 +45,7 @@ for file in isin_files:
         ]
     ]
 
+    df['Eksklusionsårsager'] = df['Årsag til eksklusion']
     # Step 3: Modify 'Årsag til eksklusion' by adding the file prefix at the beginning
     df["Årsag til eksklusion"] = df["Årsag til eksklusion"].apply(lambda x: f"{file_prefix}: {x}")
 
@@ -90,6 +91,7 @@ collapsed_df = (
             "Matched Udsteder": merge_values,
             "Matched Værdipapirets navn": merge_values,
             "Kommuner": merge_values,  # Assuming this is the column that contains lists
+            "Eksklusionsårsager":merge_values,
         }
     )
     .reset_index()

@@ -45,6 +45,8 @@ for file in isin_files:
         ]
     ]
 
+    df["Eksklusionsårsager"] = df["Årsag til eksklusion"]
+
     # Step 3: Modify 'Årsag til eksklusion' by adding the file prefix at the beginning
     df["Årsag til eksklusion"] = df["Årsag til eksklusion"].apply(lambda x: f"{file_prefix}: {x}")
 
@@ -90,12 +92,60 @@ collapsed_df = (
             "Matched Udsteder": merge_values,
             "Matched Værdipapirets navn": merge_values,
             "Kommuner": merge_values,  # Assuming this is the column that contains lists
+            "Eksklusionsårsager":merge_values,
         }
     )
     .reset_index()
 )
 
 # collapsed_df.to_excel("../data/unique_lande_all_isin.xlsx", index=False)
+
+# List of ISIN numbers to remove - Er et fejlmatch
+isin_to_remove = [
+    "XS2310799809",
+    "IL0060404899",
+    "US55300RAG65",
+    "USP7807HAV70",
+    "US80007RAL96",
+    "XS0294364954",
+    "XS0294367205",
+    "XS1319820897",
+    "XS1807299331",
+    "XS1827041721",
+    "XS2010026727",
+    "XS2010030240",
+    "XS2063540038",
+    "XS2075924048",
+    "XS2175968580",
+    "XS2227351900",
+    "XS2248458395",
+    "XS2260457754",
+    "XS2288824969",
+    "XS2337067792",
+    "XS2348591707",
+    "XS2356571559",
+    "XS2357494322",
+    "XS2399149694",
+    "XS2472852610",
+    "XS2477752260",
+    "XS2530049837",
+    "XS2539374673",
+    "XS2624479288",
+    "XS2651081304",
+    "XS2677030194",
+    "XS2689095086",
+    "XS2707149600",
+    "XS2725803162",
+    "XS2800066297",
+    "XS2800066370",
+    "XS2830445727",
+    "XS2834924867",
+    "XS2852966501",
+    "USP7807HAT25",
+]
+
+# Remove rows with ISINs in the list
+collapsed_df = collapsed_df[~collapsed_df["ISIN"].isin(isin_to_remove)]
 
 
 # Step 8: Flatten lists, deduplicate values, and return as a semicolon-separated string

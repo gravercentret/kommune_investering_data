@@ -1,7 +1,10 @@
-import pandas as pd
 import polars as pl
+import plotly.express as px
 import streamlit as st
-import matplotlib.pyplot as plt
+from utils.data_prep import (
+    round_to_million,
+)
+
 
 def create_pie_chart(filtered_df):
     # Group the data by 'Type' and sum the 'Markedsværdi (DKK)'
@@ -33,22 +36,44 @@ def create_pie_chart(filtered_df):
     }
 
     # Match the colors with the values in 'Type'
-    colors = [color_mapping.get(type_val, "gray") for type_val in type_distribution["Type"]]
+    type_distribution["color"] = type_distribution["Type"].map(color_mapping)
 
-    # Plot the pie chart using matplotlib
-    fig, ax = plt.subplots()
-    ax.pie(
-        type_distribution["Total Markedsværdi"],
-        colors=colors,
-        startangle=0,
-        autopct="%1.1f%%",
-        textprops={"fontsize": 14},
+    # Apply rounding to 'Total Markedsværdi' for display in hover text
+    type_distribution["Markedsværdi_display"] = type_distribution["Total Markedsværdi"].apply(
+        round_to_million
     )
 
-    # Add a legend with the 'Type' values
-    ax.legend(
-        type_distribution["Type"], title="Type", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1)
+    # Create a pie chart using Plotly
+    fig = px.pie(
+        type_distribution,
+        values="Total Markedsværdi",
+        names="Type",
+        color="Type",  # Set colors for categories
+        color_discrete_map=color_mapping,
+        title="Typer af fordel på økonomisk andel",
     )
+    fig.update_traces(
+        textinfo="percent",
+        hovertemplate="<b>%{label}</b><br>Markedsværdi: %{customdata}<extra></extra>",
+        customdata=type_distribution["Markedsværdi_display"],  # Use the rounded values in hover
+        sort=False,  # Keeps the original order of the data
+        rotation=90,
+    )  # Rotates the pie chart
 
-    # Display the pie chart in Streamlit
-    st.pyplot(fig)
+    # Adjust the layout to prevent text from being cut off
+    fig.update_layout(
+        title=dict(
+            font=dict(size=20),
+        ),
+        showlegend=True,
+        legend_title="Type",
+        legend=dict(
+            x=1,  # Adjusts horizontal position of the legend
+            y=1,  # Adjusts vertical position of the legend
+            traceorder="normal",
+            font=dict(size=14),
+            bgcolor="rgba(0,0,0,0)",  # Transparent background
+        ),
+        margin=dict(l=50, r=150, t=50, b=50),  # Increase right margin for legend
+    )
+    st.plotly_chart(fig)

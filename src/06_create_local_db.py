@@ -4,6 +4,23 @@ from sqlalchemy import create_engine
 data_path = "../data/full_data.xlsx"
 df = pd.read_excel(data_path)
 
+# Choose which columns to send to database
+df = df[
+    [
+        "Kommune",
+        "ISIN kode",
+        "Værdipapirets navn",
+        "Udsteder",
+        "Markedsværdi (DKK)",
+        "Type",
+        "Årsag til eksklusion",
+        "OBS_Type",
+        "Priority",
+        "Problematisk ifølge:",
+        "Eksklusionsårsager",
+    ]
+]
+
 # Create an SQLite engine
 engine = create_engine("sqlite:///investerings_database.db")
 
