@@ -1,0 +1,12 @@
+/* style.css */
+
+/* Change the background color to a mild grey */
+body {
+    background-color: #dadada;
+}
+
+/* Optional: Customize the font and text color for better readability */
+h1, h2, h3, h4, h5, h6, p {
+    color: #ffffff; /* Darker text color for better contrast */
+    font-family: Arial, sans-serif; /* You can choose your preferred font */
+}
