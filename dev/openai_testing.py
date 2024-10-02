@@ -66,6 +66,7 @@ def generate_text_from_dataframe(
 
     return completion.choices[0].message
 
+
 system_prompt = """Du er en assistent, der skal hjælpe en journalist. 
     Du får en liste med forskellige temaer.
     Lav et resumé af disse i punktform. 
@@ -86,11 +87,12 @@ df_test = df_pd[df_pd["Kommune"] == kommune]
 # antal_inv_prop = len(df_test[df_test["Problematisk ifølge:"].notna()])
 # sum_inv_prop = sum(df_test[df_test["Problematisk ifølge:"].notna()]["Markedsværdi (DKK)"])
 
+
 def create_unique_reasons_list(df):
-    årsager = set(df_prop['Eksklusionsårsager'].tolist())
+    årsager = set(df_prop["Eksklusionsårsager"].tolist())
 
     # Step 1: Flatten the list by splitting each string on the semicolon
-    flattened_topics = [topic.strip() for item in årsager for topic in item.split(';')]
+    flattened_topics = [topic.strip() for item in årsager for topic in item.split(";")]
 
     # Step 2: Create a set to store unique topics
     unique_topics = set(flattened_topics)
@@ -100,6 +102,7 @@ def create_unique_reasons_list(df):
     unique_topics = sorted(unique_topics)
 
     return unique_topics
+
 
 df_prop = df_test[df_test["Problematisk ifølge:"].notna()]
 
@@ -133,17 +136,17 @@ print(result.content)
 #     Lav det som et
 #     kort og præcist resumé i en sammenhængende tekst.""" # gerne i punktform.
 
-# system_prompt = """Du er en assistent, der skal hjælpe en journalist. 
-#     Lav en opsummering, der skal beskrive det problematiske i det data, 
-#     som journalisten sender. Der vil handle om investeringer 
-#     fra en dansk kommune eller region. I kolonnen 
-#     'Problematisk ifølge:' fremgår hvilke organisationer, 
-#     som har sat det angivne selskab på deres eksklusionsliste. 
-#     I kolonnen 'Årsag til eksklusion:' står der hvorfor. 
-#     Lav det som et kort og præcist resumé i punktform, 
-#     der får de vigtigste informationer med. 
+# system_prompt = """Du er en assistent, der skal hjælpe en journalist.
+#     Lav en opsummering, der skal beskrive det problematiske i det data,
+#     som journalisten sender. Der vil handle om investeringer
+#     fra en dansk kommune eller region. I kolonnen
+#     'Problematisk ifølge:' fremgår hvilke organisationer,
+#     som har sat det angivne selskab på deres eksklusionsliste.
+#     I kolonnen 'Årsag til eksklusion:' står der hvorfor.
+#     Lav det som et kort og præcist resumé i punktform,
+#     der får de vigtigste informationer med.
 #     Beksriv kun data og kom ikke selv med nogle fortolkende input.
-#     """  # gerne i punktform.  
+#     """  # gerne i punktform.
 
 # Optional prompt template, you can give instructions here
 # prompt_template = f"""Opsummer investeringerne foretaget af {kommune}. Her er ekstra information om data.

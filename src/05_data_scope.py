@@ -120,6 +120,36 @@ def clean_type(type_value):
 # Apply the function to the 'Type' column
 filled_df["Type"] = filled_df["Type"].apply(clean_type)
 
+##### Lav paraply-kolonne
+data_path_paraply = "Paraply_betegnelser_eksklusion.xlsx"
+paraply_df = pd.read_excel(data_path_paraply)
+# Remove the first character if it is a single quote (')
+paraply_df["Årsag_orginal"] = paraply_df["Årsag_orginal"].apply(
+    lambda x: x[1:] if x.startswith("'") else x
+)
+
+
+# Create a dictionary for faster mapping
+mapping_dict = pd.Series(
+    paraply_df["Årsag_kategori"].values, index=paraply_df["Årsag_orginal"]
+).to_dict()
+
+
+# Function to map original causes to categories
+def map_causes(causes):
+    if pd.isna(causes):
+        return None  # Handle None or NaN values
+    causes_list = causes.split("; ")  # Split the causes by '; '
+    # Map the causes using the mapping dictionary
+    mapped_causes = [
+        mapping_dict.get(cause.strip(), cause) for cause in causes_list
+    ]  # Map the causes
+    unique_categories = sorted(set(mapped_causes))  # Remove duplicates and sort
+    return "; ".join(unique_categories)  # Join them back
+
+
+# Apply the mapping function to create the new column
+filled_df["Årsagskategori"] = filled_df["Eksklusionsårsager"].apply(map_causes)
 
 # Save the merged DataFrame to a new Excel file if needed
 filled_df.to_excel("../data/full_data.xlsx", index=False)

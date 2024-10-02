@@ -92,7 +92,7 @@ collapsed_df = (
             "Matched Udsteder": merge_values,
             "Matched Værdipapirets navn": merge_values,
             "Kommuner": merge_values,  # Assuming this is the column that contains lists
-            "Eksklusionsårsager":merge_values,
+            "Eksklusionsårsager": merge_values,
         }
     )
     .reset_index()

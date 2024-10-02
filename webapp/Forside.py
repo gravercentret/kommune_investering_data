@@ -78,9 +78,11 @@ st.markdown(
             """
 )
 with st.expander("Læs mere: Hvordan skal tallene forstås?", icon="❔"):
-    st.markdown("""Her kan vi skrive en forklarende tekst. 
+    st.markdown(
+        """Her kan vi skrive en forklarende tekst. 
                 Forklarende tekst: \n
-                - Problematiske: Dem, der er på eksklusionslisterne.  """)
+                - Problematiske: Dem, der er på eksklusionslisterne.  """
+    )
 # Get unique municipalities and sort alphabetically
 unique_kommuner = get_unique_kommuner(st.session_state.df_pl)
 

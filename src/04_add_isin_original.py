@@ -50,7 +50,7 @@ df_yellow.rename(
     inplace=True,
 )
 df_yellow.drop("Type", axis=1, inplace=True)
-df_yellow['Eksklusionsårsager'] = df_yellow["Årsag til eksklusion"]
+df_yellow["Eksklusionsårsager"] = df_yellow["Årsag til eksklusion"]
 df_yellow["Årsag til eksklusion"] = "Gravercentret: " + df_yellow["Årsag til eksklusion"].astype(
     str
 )
@@ -75,7 +75,7 @@ duplicate_isin = df_all_lists[df_all_lists.duplicated(subset="ISIN", keep=False)
 
 def merge_reason(group):
     # Sort the group by priority (red first, then orange)
-    group = group.sort_values(by="Priority", ascending=False)
+    group = group.sort_values(by="Priority", ascending=True)
 
     # Remove the yellow
     group = group[group["OBS_Type"] != "yellow"]
