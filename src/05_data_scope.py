@@ -149,7 +149,7 @@ def map_causes(causes):
 
 
 # Apply the mapping function to create the new column
-filled_df["Årsagskategori"] = filled_df["Eksklusionsårsager"].apply(map_causes)
+filled_df["Problemkategori"] = filled_df["Eksklusionsårsager"].apply(map_causes)
 
 # Save the merged DataFrame to a new Excel file if needed
 filled_df.to_excel("../data/full_data.xlsx", index=False)

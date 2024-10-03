@@ -106,7 +106,7 @@ df_to_db = df[
         "Priority",
         "Problematisk ifølge:",
         "Eksklusionsårsager",
-        "Årsagskategori",
+        "Problemkategori",
     ]
 ]
 

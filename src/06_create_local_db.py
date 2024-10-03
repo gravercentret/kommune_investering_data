@@ -18,6 +18,7 @@ df = df[
         "Priority",
         "Problematisk ifølge:",
         "Eksklusionsårsager",
+        "Problemkategori",
     ]
 ]
 
