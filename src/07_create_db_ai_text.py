@@ -112,7 +112,7 @@ engine = create_engine("sqlite:///investerings_database_encrypted_new.db")
 
 # # Save the DataFrame 'df' to the SQLite database
 # # 'data_table' is the name of the table that will be created in the database
-# df_summaries.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
+df_summaries.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
 
 # print("DataFrame has been saved to SQLite database as 'data_table'.")
 
@@ -137,8 +137,8 @@ df_errors["Ændring"] = df_errors["Ændring"].str.strip()
 # Function to clean up the resumé
 def clean_resumé(kommune, resumé, df_errors):
     # Get the row in df_errors that matches the kommune
+    
     error_rows = df_errors[df_errors["Kommune"] == kommune]
-
     if not error_rows.empty:
         # Loop through each error row
         for _, error_row in error_rows.iterrows():
@@ -151,34 +151,90 @@ def clean_resumé(kommune, resumé, df_errors):
                 if isinstance(replacement, str) and replacement.strip():
                     resumé = resumé.replace(text_to_remove, replacement)
                 else:
-                    # If no replacement, simply remove the text
-                    resumé = resumé.replace(f"- {text_to_remove}\n", "").replace(
-                        f"- {text_to_remove}", ""
-                    )
+                    # Handle newline and space cleanup
+                    resumé = resumé.replace(f"\n  - {text_to_remove}", "") \
+                                .replace(f"- {text_to_remove}", "") \
+                                .replace(f"- {text_to_remove}\n", "")
 
-    # Handle special case to remove "\n\nOverordnede årsager:"
-    if "\n\nOverordnede årsager:" in resumé:
-        resumé = resumé.replace("\n\nOverordnede årsager:", "")
+        # After all removals, clean up consecutive newlines
+        resumé = '\n'.join([line for line in resumé.split('\n') if line.strip()])
 
-    # Return the updated resumé (or original if no match was found)
+    
+    resumé = resumé.replace("- Overordnede årsager: \n", "")
+    resumé = resumé.replace("- Eksklusionsårsager: \n", "")
+    resumé = resumé.replace("\n\nOverordnede årsager:", "")
+    resumé = resumé.replace("\n\n- Eksklusionsårsager:", "")
     return resumé
-
-
 # Apply the function to clean up the resumé for each row in df_resumé
 df_resumé["Resumé_renset"] = df_resumé.apply(
     lambda row: clean_resumé(row["Kommune"], row["Resumé"], df_errors), axis=1
 )
+df_resumé.loc[df_resumé['Kommune'] == 'Greve', 'Resumé_renset'] = df_resumé.loc[df_resumé['Kommune'] == 'Greve', 'Resumé_renset'].iloc[0] + "\n- Naturressourcer"
+df_resumé.loc[df_resumé['Kommune'] == 'Svendborg', 'Resumé_renset'] = df_resumé.loc[df_resumé['Kommune'] == 'Svendborg', 'Resumé_renset'].iloc[0] + "\n- Støtte til tjenester og forsyninger i besættelsesområder\n- Våben"
 
-# Print the updated dataframe
-print(df_resumé)
 
+####
 
-###
-# Create an SQLite engine
-# engine = create_engine("sqlite:///investerings_database_ai_tekster.db")
+df_resumé['Resumé'] = df_resumé['Resumé_renset']
+df_resumé.drop('Resumé_renset', axis=1, inplace=True)
+
+engine = create_engine("sqlite:///investerings_database_encrypted_new.db")
 
 # # Save the DataFrame 'df' to the SQLite database
 # # 'data_table' is the name of the table that will be created in the database
-# df_summaries.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
+df_resumé.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
 
-# print("DataFrame has been saved to SQLite database as 'data_table'.")
+
+# Print the updated dataframe
+# print(df_resumé)
+
+# import re 
+
+# def clean_resumé_alle_kommuner_with_replacement(resumé, df_errors):
+#     # Get rows that apply to all kommuner and have a valid replacement
+#     error_rows_all = df_errors[(df_errors['Kommune'] == 'Alle kommuner') & 
+#                                (df_errors['Ændring'].notna())]
+    
+#     if not error_rows_all.empty:
+#         # Loop through each error row in 'Alle kommuner' with a replacement
+#         for _, error_row in error_rows_all.iterrows():
+#             text_to_remove = error_row['Fjern']
+#             replacement = error_row['Ændring']
+            
+#             # Only proceed if text_to_remove and replacement are valid strings
+#             if isinstance(text_to_remove, str) and isinstance(replacement, str) and replacement.strip():
+#                 # Create regex to match the entire line that contains "- {text_to_remove}\n" or "- {text_to_remove} \n"
+#                 pattern = rf"(?m)^\s*- {re.escape(text_to_remove)} ?\n"
+                
+#                 # Replace the found text with the replacement, ensuring the entire line is replaced
+#                 resumé = re.sub(pattern, f"- {replacement}\n", resumé)
+        
+#         # Clean up consecutive newlines
+#         resumé = '\n'.join([line for line in resumé.split('\n') if line.strip()])
+    
+#     # Return the updated resumé (or original if no match was found)
+#     return resumé
+
+# # Example usage of the new function:
+# # Apply the function to clean up 'Alle kommuner' entries with replacements for each row in df_resumé
+# df_resumé['Resumé_renset'] = df_resumé['Resumé_renset'].apply(lambda res: clean_resumé_alle_kommuner_with_replacement(res, df_errors))
+
+df_resumé.to_excel("ai_text_corrected.xlsx")
+
+###
+# Create an SQLite engine
+engine = create_engine("sqlite:///investerings_database_ai_tekster.db")
+
+# Save the DataFrame 'df' to the SQLite database
+# 'data_table' is the name of the table that will be created in the database
+df_resumé.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
+
+print("DataFrame has been saved to SQLite database as 'data_table'.")
+
+engine = create_engine("sqlite:///investerings_database.db")
+
+# Save the DataFrame 'df' to the SQLite database
+# 'data_table' is the name of the table that will be created in the database
+df_resumé.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
+
+print("DataFrame has been saved to SQLite database as 'data_table'.")
