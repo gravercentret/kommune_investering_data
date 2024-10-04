@@ -164,6 +164,8 @@ def clean_resumé(kommune, resumé, df_errors):
     resumé = resumé.replace("- Eksklusionsårsager: \n", "")
     resumé = resumé.replace("\n\nOverordnede årsager:", "")
     resumé = resumé.replace("\n\n- Eksklusionsårsager:", "")
+    resumé = resumé.replace("\nOverordnede årsager:", "")
+
     return resumé
 # Apply the function to clean up the resumé for each row in df_resumé
 df_resumé["Resumé_renset"] = df_resumé.apply(
@@ -172,11 +174,48 @@ df_resumé["Resumé_renset"] = df_resumé.apply(
 df_resumé.loc[df_resumé['Kommune'] == 'Greve', 'Resumé_renset'] = df_resumé.loc[df_resumé['Kommune'] == 'Greve', 'Resumé_renset'].iloc[0] + "\n- Naturressourcer"
 df_resumé.loc[df_resumé['Kommune'] == 'Svendborg', 'Resumé_renset'] = df_resumé.loc[df_resumé['Kommune'] == 'Svendborg', 'Resumé_renset'].iloc[0] + "\n- Støtte til tjenester og forsyninger i besættelsesområder\n- Våben"
 
-
 ####
+
+import re 
+
+# New function to handle 'Alle kommuner' rows with replacements only, processing longest strings first
+def clean_resumé_alle_kommuner_with_replacement(resumé, df_errors):
+    # Get rows that apply to all kommuner and have a valid replacement
+    error_rows_all = df_errors[(df_errors['Kommune'] == 'Alle kommuner') & 
+                               (df_errors['Ændring'].notna())]
+    
+    if not error_rows_all.empty:
+        # Sort the error rows by the length of the 'Fjern' strings, longest first
+        error_rows_all = error_rows_all.sort_values(by='Fjern', key=lambda x: x.str.len(), ascending=False)
+        
+        # Loop through each error row in 'Alle kommuner' with a replacement, longest strings first
+        for _, error_row in error_rows_all.iterrows():
+            text_to_remove = error_row['Fjern']
+            replacement = error_row['Ændring']
+            
+            # Only proceed if text_to_remove and replacement are valid strings
+            if isinstance(text_to_remove, str) and isinstance(replacement, str) and replacement.strip():
+                # Create regex to match the "- {text_to_remove}" while keeping the "- " and "\n" intact
+                pattern = rf"(?m)^(\s*- ){re.escape(text_to_remove)}(\n)"
+                
+                # Replace the found text with the replacement while keeping the "- " and "\n"
+                resumé = re.sub(pattern, rf"\1{replacement}\2", resumé)
+        
+        # Clean up consecutive newlines
+        resumé = '\n'.join([line for line in resumé.split('\n') if line.strip()])
+    
+    # Return the updated resumé (or original if no match was found)
+    return resumé
+
+df_resumé['Resumé_renset'] = df_resumé['Resumé_renset'].apply(lambda res: clean_resumé_alle_kommuner_with_replacement(res, df_errors))
 
 df_resumé['Resumé'] = df_resumé['Resumé_renset']
 df_resumé.drop('Resumé_renset', axis=1, inplace=True)
+
+
+df_resumé.to_excel("ai_text_corrected.xlsx")
+
+###
 
 engine = create_engine("sqlite:///investerings_database_encrypted_new.db")
 
@@ -185,43 +224,6 @@ engine = create_engine("sqlite:///investerings_database_encrypted_new.db")
 df_resumé.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
 
 
-# Print the updated dataframe
-# print(df_resumé)
-
-# import re 
-
-# def clean_resumé_alle_kommuner_with_replacement(resumé, df_errors):
-#     # Get rows that apply to all kommuner and have a valid replacement
-#     error_rows_all = df_errors[(df_errors['Kommune'] == 'Alle kommuner') & 
-#                                (df_errors['Ændring'].notna())]
-    
-#     if not error_rows_all.empty:
-#         # Loop through each error row in 'Alle kommuner' with a replacement
-#         for _, error_row in error_rows_all.iterrows():
-#             text_to_remove = error_row['Fjern']
-#             replacement = error_row['Ændring']
-            
-#             # Only proceed if text_to_remove and replacement are valid strings
-#             if isinstance(text_to_remove, str) and isinstance(replacement, str) and replacement.strip():
-#                 # Create regex to match the entire line that contains "- {text_to_remove}\n" or "- {text_to_remove} \n"
-#                 pattern = rf"(?m)^\s*- {re.escape(text_to_remove)} ?\n"
-                
-#                 # Replace the found text with the replacement, ensuring the entire line is replaced
-#                 resumé = re.sub(pattern, f"- {replacement}\n", resumé)
-        
-#         # Clean up consecutive newlines
-#         resumé = '\n'.join([line for line in resumé.split('\n') if line.strip()])
-    
-#     # Return the updated resumé (or original if no match was found)
-#     return resumé
-
-# # Example usage of the new function:
-# # Apply the function to clean up 'Alle kommuner' entries with replacements for each row in df_resumé
-# df_resumé['Resumé_renset'] = df_resumé['Resumé_renset'].apply(lambda res: clean_resumé_alle_kommuner_with_replacement(res, df_errors))
-
-df_resumé.to_excel("ai_text_corrected.xlsx")
-
-###
 # Create an SQLite engine
 engine = create_engine("sqlite:///investerings_database_ai_tekster.db")
 
