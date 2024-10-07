@@ -112,7 +112,7 @@ engine = create_engine("sqlite:///investerings_database_encrypted_new.db")
 
 # # Save the DataFrame 'df' to the SQLite database
 # # 'data_table' is the name of the table that will be created in the database
-df_summaries.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
+# df_summaries.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
 
 # print("DataFrame has been saved to SQLite database as 'data_table'.")
 

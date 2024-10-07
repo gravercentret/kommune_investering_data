@@ -119,6 +119,7 @@ paraply_df["Årsag_orginal"] = paraply_df["Årsag_orginal"].apply(
     lambda x: x[1:] if x.startswith("'") else x
 )
 
+paraply_df.to_excel("Paraply_betegnelser_eksklusion.xlsx", index=False)
 
 # Create a dictionary for faster mapping
 mapping_dict = pd.Series(
