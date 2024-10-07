@@ -5,7 +5,7 @@ data_path = "../data/full_data.xlsx"
 df = pd.read_excel(data_path)
 
 # Choose which columns to send to database
-df = df[
+df_to_db = df[
     [
         "Kommune",
         "ISIN kode",
@@ -17,6 +17,7 @@ df = df[
         "OBS_Type",
         "Priority",
         "Problematisk ifølge:",
+        "Sortlistet",
         "Eksklusionsårsager",
         "Problemkategori",
     ]
