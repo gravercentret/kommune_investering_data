@@ -105,6 +105,7 @@ df_to_db = df[
         "OBS_Type",
         "Priority",
         "Problematisk ifølge:",
+        "Sortlistet",
         "Eksklusionsårsager",
         "Problemkategori",
     ]

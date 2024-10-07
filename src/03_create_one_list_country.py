@@ -186,7 +186,7 @@ collapsed_df["Matched Værdipapirets navn"] = collapsed_df["Matched Værdipapire
 )
 
 # Save the collapsed dataframe to a new Excel file
-collapsed_df.to_excel("../data/all_exclude_country_lists_isin.xlsx", index=False)
+# collapsed_df.to_excel("../data/all_exclude_country_lists_isin.xlsx", index=False)
 
 # Print the resulting DataFrame
 print(collapsed_df)
