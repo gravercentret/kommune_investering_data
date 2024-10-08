@@ -1,4 +1,4 @@
-#%%
+
 import pandas as pd
 from sqlalchemy import create_engine
 import numpy as np
@@ -98,23 +98,23 @@ with open("../dev/api_key.txt") as f:
     api_key = f.read()
 
 
-data_path = "../data/full_data.xlsx"
-df = pd.read_excel(data_path)
-# df_only_prop = df[df["Problematisk ifølge:"].notna()]
-df_sort = df.sort_values('Kommune')
-# df_sort = df_sort.head(10000)
-df_summaries = create_area_text(df_sort, api_key)
+# data_path = "../data/full_data.xlsx"
+# df = pd.read_excel(data_path)
+# # df_only_prop = df[df["Problematisk ifølge:"].notna()]
+# df_sort = df.sort_values('Kommune')
+# # df_sort = df_sort.head(10000)
+# df_summaries = create_area_text(df_sort, api_key)
 
-df_summaries.to_csv("andet_udkast_ai_tekster.csv")
+# df_summaries.to_csv("andet_udkast_ai_tekster.csv")
 
-df_reason = create_area_text(df_sort, api_key)
+# df_reason = create_area_text(df_sort, api_key)
 
 # # Create an SQLite engine
 engine = create_engine("sqlite:///investerings_database_encrypted_new.db")
 
 # Save the DataFrame 'df' to the SQLite database
 # 'data_table' is the name of the table that will be created in the database
-df_summaries.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
+# df_summaries.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
 
 # print("DataFrame has been saved to SQLite database as 'data_table'.")
 
@@ -147,20 +147,26 @@ def clean_resumé(kommune, resumé, df_errors):
             text_to_remove = error_row["Fjern"]
             replacement = error_row["Ændring"]
 
-            # Only proceed if text_to_remove is a string and exists in the resumé
-            if isinstance(text_to_remove, str) and text_to_remove in resumé:
-                # If there is a replacement and it's valid, replace the text
-                if isinstance(replacement, str) and replacement.strip():
+            # Only proceed if replacement exists and is valid
+            if isinstance(replacement, str) and replacement.strip():
+                # Case 1: Replacement exists, and text_to_remove also exists in resumé
+                if isinstance(text_to_remove, str) and text_to_remove in resumé:
+                    # Replace the text_to_remove with the replacement
                     resumé = resumé.replace(text_to_remove, replacement)
-                else:
-                    # Handle newline and space cleanup
-                    resumé = resumé.replace(f"\n  - {text_to_remove}", "") \
-                                .replace(f"- {text_to_remove}", "") \
-                                .replace(f"- {text_to_remove}\n", "")
+                # Case 2: Replacement exists, but no text_to_remove
+                elif not isinstance(text_to_remove, str) or text_to_remove.strip() == "":
+                    # Add replacement with "\n- " in front of it
+                    resumé += f"\n- {replacement}"
 
+            # Case 3: text_to_remove exists but no replacement (removal without replacement)
+            elif isinstance(text_to_remove, str) and text_to_remove in resumé:
+                # Handle newline and space cleanup when removing the text
+                resumé = resumé.replace(f"\n  - {text_to_remove}", "") \
+                               .replace(f"- {text_to_remove}", "") \
+                               .replace(f"- {text_to_remove}\n", "")
+        
         # After all removals, clean up consecutive newlines
         resumé = '\n'.join([line for line in resumé.split('\n') if line.strip()])
-
     
     resumé = resumé.replace("- Overordnede årsager: \n", "")
     resumé = resumé.replace("- Overordnede årsager:\n", "")
@@ -211,8 +217,8 @@ def clean_resumé_alle_kommuner_with_replacement(resumé, df_errors):
 
 df_resumé['Resumé_renset'] = df_resumé['Resumé_renset'].apply(lambda res: clean_resumé_alle_kommuner_with_replacement(res, df_errors))
 
-df_resumé['Resumé'] = df_resumé['Resumé_renset']
-df_resumé.drop('Resumé_renset', axis=1, inplace=True)
+# df_resumé['Resumé'] = df_resumé['Resumé_renset']
+# df_resumé.drop('Resumé_renset', axis=1, inplace=True)
 
 
 df_resumé.to_excel("ai_text_corrected.xlsx")
