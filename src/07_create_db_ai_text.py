@@ -122,7 +122,7 @@ engine = create_engine("sqlite:///investerings_database_encrypted_new.db")
 # Connect to the SQLite database
 with engine.connect() as conn:
     # Sample query to select all rows
-    query = "SELECT * FROM kommunale_regioner_ai_tekster;"  # Example query
+    query = "SELECT * FROM kommune_region_i_tekster_alle;"  # kommunale_regioner_ai_tekster
 
     df_resumé = pd.read_sql(query, conn)
 
@@ -227,9 +227,13 @@ df_resumé.to_excel("ai_text_corrected.xlsx")
 
 engine = create_engine("sqlite:///investerings_database_encrypted_new.db")
 
+df_kort = df_resumé.iloc[-1]
 # # Save the DataFrame 'df' to the SQLite database
 # # 'data_table' is the name of the table that will be created in the database
-df_resumé.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
+df_kort.to_sql("kommunale_regioner_ai_tekster", engine, if_exists="replace", index=False)
+
+### NY med alle
+df_resumé.to_sql("kommune_region_i_tekster_alle", engine, if_exists="replace", index=False)
 
 
 # Create an SQLite engine
