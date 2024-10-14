@@ -217,8 +217,37 @@ def clean_resumé_alle_kommuner_with_replacement(resumé, df_errors):
 
 df_resumé['Resumé_renset'] = df_resumé['Resumé_renset'].apply(lambda res: clean_resumé_alle_kommuner_with_replacement(res, df_errors))
 
-# df_resumé['Resumé'] = df_resumé['Resumé_renset']
-# df_resumé.drop('Resumé_renset', axis=1, inplace=True)
+# Function to remove duplicate bullet points
+def remove_duplicate_bullets(resumé):
+    if pd.isna(resumé) or resumé.strip() == "":
+        return resumé  # Return as is if empty or NaN
+
+    # Split the resumé into individual bullet points
+    bullets = resumé.split("\n")
+    
+    # Use a set to track unique bullets and a list to keep the order
+    unique_bullets = []
+    seen_bullets = set()
+    
+    for bullet in bullets:
+        stripped_bullet = bullet.strip()  # Remove any extra spaces from the bullet
+        if stripped_bullet and stripped_bullet not in seen_bullets:
+            unique_bullets.append(bullet)  # Keep the original bullet with formatting
+            seen_bullets.add(stripped_bullet)  # Track seen bullets
+    
+    # Join the cleaned bullets back into a single string
+    cleaned_resumé = "\n".join(unique_bullets)
+    
+    return cleaned_resumé
+
+# Example of applying this function to a DataFrame column
+# Assuming you have a DataFrame 'df' with a column 'Resumé'
+
+# Apply the function to each row in the 'Resumé' column
+df_resumé['Resumé_renset'] = df_resumé['Resumé_renset'].apply(remove_duplicate_bullets)
+
+df_resumé['Resumé'] = df_resumé['Resumé_renset']
+df_resumé.drop('Resumé_renset', axis=1, inplace=True)
 
 
 df_resumé.to_excel("ai_text_corrected.xlsx")
