@@ -53,7 +53,10 @@ def extract_organisations(row):
 
     # Create values for new columns
     org_names = "; ".join(org_with_list) if org_with_list else ""
-    org_count = len(org_with_list)  # Count how many organizations were found
+    if org_names == 'Gravercentret':
+        org_count = 0
+    else:
+        org_count = len(org_with_list)  # Count how many organizations were found
 
     return org_names, org_count
 
