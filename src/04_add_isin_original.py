@@ -4,6 +4,18 @@ import numpy as np
 data_path = "../data/investeringer_datagrundlag.xlsx"
 df = pd.read_excel(data_path)
 
+### Obs - Nyt data for KBH
+# Step 2: Remove rows where 'Kommune' is 'København'
+df_filtered = df[df['Kommune'] != 'København']
+
+# Step 3: Load the new data from 'Københavns Kommune-august2024.xlsx'
+new_data_path = "../data/Københavns Kommune-august2024.xlsx"
+df_new = pd.read_excel(new_data_path)
+
+# Step 4: Append the new data to the filtered dataframe
+df_concat = pd.concat([df_filtered, df_new], ignore_index=True)
+
+
 ### Cleaning df_kilde
 # Replace '-' with NaN (remove entries with no value)
 df["Markedsværdi (DKK)"] = df["Markedsværdi (DKK)"].replace("-", np.nan)
