@@ -15,6 +15,7 @@ df_new = pd.read_excel(new_data_path)
 # Step 4: Append the new data to the filtered dataframe
 df_concat = pd.concat([df_filtered, df_new], ignore_index=True)
 
+df = df_concat
 
 ### Cleaning df_kilde
 # Replace '-' with NaN (remove entries with no value)

@@ -10,6 +10,12 @@ isin_files = [
     file for file in os.listdir(folder_path) if file.endswith("_isin.xlsx")
 ]  # and file.startswith("FN")]
 
+# Make sure 'OBS_eksklusionsliste_isin.xlsx' is processed first
+obs_file = "OBS_eksklusionsliste_isin.xlsx"
+if obs_file in isin_files:
+    isin_files.remove(obs_file)  # Remove it from the list
+    isin_files.insert(0, obs_file)  # Insert it at the beginning
+
 # Initialize an empty list to store dataframes
 dataframes = []
 
