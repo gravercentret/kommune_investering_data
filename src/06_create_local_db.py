@@ -36,7 +36,7 @@ print("DataFrame has been saved to SQLite database as 'data_table'.")
 # Connect to the SQLite database
 with engine.connect() as conn:
     # Sample query to select all rows
-    query = "SELECT * FROM kommunale_regioner_investeringer WHERE `Kommune` = 'Albertslund';"  # Example query
+    query = "SELECT * FROM kommunale_regioner_investeringer WHERE `ISIN kode` = 'JP3481800005';"  # Example query
     # query = """
     #         SELECT [Kommune], [ISIN kode], [Værdipapirets navn],
     #     [Udsteder], [Markedsværdi (DKK)], [Type],

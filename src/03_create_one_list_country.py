@@ -185,7 +185,7 @@ collapsed_df["Matched Værdipapirets navn"] = collapsed_df["Matched Værdipapire
     flatten_and_unique
 )
 
-# Save the collapsed dataframe to a new Excel file
+# Save the collapsed dataframe to a new Excel file # I have added XS2294323386 (Saudi Arabia) to the list
 # collapsed_df.to_excel("../data/all_exclude_country_lists_isin.xlsx", index=False)
 
 # Print the resulting DataFrame
